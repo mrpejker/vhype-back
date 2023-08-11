@@ -1,0 +1,23 @@
+name: Pre Deploy Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build_and_preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js v16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+      - name: Installing Node Modules
+        run: yarn
+      - name: Building and linting codebase
+        run: yarn build && yarn lint
+      - name: Run Tests
+        run: yarn test -- -u

@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "staging": "vself-dev",
+    "prod": "vself-prod",
+    "default": "vself-dev"
+  }
+}

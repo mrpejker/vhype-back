@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Rational';
+  src: url('../public/fonts/RationalTWText-Medium.otf');
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'WorkSans';
+  src: url('../public/fonts/WorkSans-VariableFont_wght.ttf');
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('../public/fonts/Inter-Light.ttf');
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'InterBold';
+  src: url('../public/fonts/Inter-Bold.otf');
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'DrukBold';
+  src: url('../public/fonts/DrukWideCyrBold.otf');
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'DrukMedium';
+  src: url('../public/fonts/DrukWideCyrMedium.otf');
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'DrukHeavy';
+  src: url('../public/fonts/DrukWideCyrHeavy.otf');
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Grotesk';
+  src: url('../public/fonts/cy-grotesk-grand-dark.otf');
+  font-display: block;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  /* height: 100%; */
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
+    Helvetica Neue, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.pulse {
+  background: linear-gradient(-90deg, #b6b4b4 0%, #fcfcfc 50%, #a9a7a7 100%);
+  background-size: 200% 100%;
+  animation: gradient-animation 2s ease infinite;
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position: left;
+  }
+  100% {
+    background-position: right;
+  }
+}
+@layer utilities {
+  .custom-invert {
+    filter: invert(36%) sepia(89%) saturate(1063%) hue-rotate(181deg) brightness(97%) contrast(90%);
+  }
+}
+
+[contentEditable=true]:empty:before {
+  content: attr(placeholder);
+  opacity: 0.6;
+}
+
