@@ -61,7 +61,11 @@ function MyApp({ Component, pageProps }: AppProps) {
           ethereumClient={ethereumClient}
           defaultChain={defaultChain}
           chainImages={{
+            '500': '/cam-token.svg',
             '501': '/cam-token.svg'
+          }}
+          tokenImages={{
+            'CAM': '/cam-token.svg',
           }}
         />
       </>

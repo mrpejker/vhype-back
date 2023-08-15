@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { GetServerSidePropsContext, NextPage } from 'next';
+import { readContract } from '@wagmi/core'
 import PageLayout from '../../components/page-layout';
 import { getConnectedContract } from '../../utils/contract';
 import EventDetails from '../../features/events-details';
+import eventsContractAbi from '../../abis/events-abi.json';
+import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants/endpoints';
 
 interface EventDetailedPageProps {
   event_id: number;
@@ -36,6 +39,19 @@ const EventDetailedPage: NextPage<EventDetailedPageProps> = ({
 export const getServerSideProps = async ({ query, res }: GetServerSidePropsContext) => {
   res.setHeader('Cache-Control', 'public, s-maxage=0, stale-while-revalidate=10');
   const event_id = query.slug;
+
+  // const ongoingEventDatas = await readContract({
+  //   address: CAMINO_EVENTS_CONTRACT_ADDRESS,
+  //   abi: eventsContractAbi,
+  //   functionName: 'getOngoingEventDatas',
+  //   args: [
+  //     0, // fromIndex
+  //     100, // limit,
+  //     true, // isAll
+  //   ],
+  //   chainId: CAMINO_CHAIN_ID
+  // });
+
   const { contract } = await getConnectedContract();
   const [actions, stats, data, activeEvents]: any = await Promise.all([
     contract.get_event_actions({ event_id: Number(event_id), from_index: 0, limit: 100 }),

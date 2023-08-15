@@ -16,7 +16,6 @@ interface EventsDashboardProps {
 }
 
 const EventsDashboardPage: NextPage<EventsDashboardProps> = ({ ongoingEventDatas = [] }) => {
-  console.log('ongoingEventDatas', ongoingEventDatas);
   const { asPath } = useRouter();
   const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
   const URL = `${origin}${asPath}`;

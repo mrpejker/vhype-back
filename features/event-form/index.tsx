@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useEffect, useState } from 'react';
+import { useAccount, useContractEvent } from 'wagmi';
 import { writeContract } from '@wagmi/core';
 import Loader from '../../components/loader';
 import Modal from '../../components/modal';
@@ -13,6 +14,7 @@ import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants
 import eventsContractAbi from "../../abis/events-abi.json";
 
 const CreateNewEvent: React.FC = () => {
+  const { address } = useAccount();
   const [eventId, setEventId] = useState<number | null>(null);
   const [event_data, setEvenData] = useState<CollectionFormData | null>(null);
   const [isError, setIsError] = useState<boolean>(false);
@@ -116,13 +118,6 @@ const CreateNewEvent: React.FC = () => {
       });
 
       console.log('tx', tx);
-
-      // // TODO: Need to refactor this.
-      // const event_id = result.receipts_outcome[0].outcome.logs[0].split(' ')[8];
-      // setEventId(Number(event_id));
-
-      setIsLoading(false);
-      setEvenData(null);
     } catch (err) {
       console.log(err);
       setIsError(true);
@@ -134,6 +129,25 @@ const CreateNewEvent: React.FC = () => {
     setEventId(null);
     setIsError(false);
   };
+
+  const unwatch = useContractEvent({
+    address: CAMINO_EVENTS_CONTRACT_ADDRESS,
+    abi: eventsContractAbi,
+    eventName: 'StartEvent',
+    listener(log) {
+      try {
+        if (log) {
+          if ((log[0] as any).args.userAddress == address) {
+            setEventId(Number((log[0] as any).args.eventId));
+            setIsLoading(false);
+            setEvenData(null);
+          }
+        }
+      } catch { }
+
+      if (log.length > 0) unwatch?.()
+    },
+  });
 
   return (
     <section

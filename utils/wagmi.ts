@@ -1,11 +1,9 @@
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 import { configureChains, createConfig } from 'wagmi'
 import { Chain } from '@wagmi/core';
-import { polygon, polygonMumbai } from 'wagmi/chains';
 import { alchemyProvider } from '@wagmi/core/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
-
-const REACT_APP_ENABLE_TESTNETS = true;
+import { REACT_APP_ENABLE_TESTNETS } from '../constants/endpoints';
 
 export const columbus = {
     id: 501,
@@ -17,8 +15,39 @@ export const columbus = {
         symbol: 'CAM',
     },
     rpcUrls: {
-        public: { http: ['https://columbus.camino.network/ext/bc/C/rpc'] },
-        default: { http: ['https://columbus.camino.network/ext/bc/C/rpc'] },
+        public: {
+            http: ['https://columbus.camino.network/ext/bc/C/rpc'],
+            webSocket: ["wss://columbus.camino.network/ext/bc/C/ws"],
+        },
+        default: {
+            http: ['https://columbus.camino.network/ext/bc/C/rpc'],
+            webSocket: ["wss://columbus.camino.network/ext/bc/C/ws"],
+        },
+    },
+    blockExplorers: {
+        etherscan: { name: 'CaminoScan', url: 'https://suite.camino.network/explorer/c-chain' },
+        default: { name: 'CaminoScan', url: 'https://suite.camino.network/explorer/c-chain' },
+    },
+} as Chain;
+
+export const camino = {
+    id: 500,
+    name: 'Camino',
+    network: 'camino',
+    nativeCurrency: {
+        decimals: 18,
+        name: 'CAM',
+        symbol: 'CAM',
+    },
+    rpcUrls: {
+        public: {
+            http: ['https://api.camino.network/ext/bc/C/rpc'],
+            webSocket: ["wss://api.camino.network/ext/bc/C/ws"],
+        },
+        default: {
+            http: ['https://api.camino.network/ext/bc/C/rpc'],
+            webSocket: ["wss://api.camino.network/ext/bc/C/ws"],
+        },
     },
     blockExplorers: {
         etherscan: { name: 'CaminoScan', url: 'https://suite.camino.network/explorer/c-chain' },
@@ -27,8 +56,7 @@ export const columbus = {
 } as Chain;
 
 const chains = [
-    polygon,
-    ...(REACT_APP_ENABLE_TESTNETS ? [polygonMumbai, columbus] : []),
+    ...(REACT_APP_ENABLE_TESTNETS ? [columbus] : [camino]),
 ];
 
 export const projectId = '664df1515d4bd775b7d5705b8277ff35';
@@ -48,5 +76,5 @@ export const wagmiConfig = createConfig({
     publicClient,
     webSocketPublicClient,
 });
-export const defaultChain = REACT_APP_ENABLE_TESTNETS ? polygonMumbai : polygon;
+export const defaultChain = REACT_APP_ENABLE_TESTNETS ? columbus : camino;
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
