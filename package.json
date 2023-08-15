@@ -17,9 +17,9 @@
     "lint": "next lint",
     "test:watch": "jest --watch",
     "test": "jest -u",
-    "deploy": "env-cmd -f .env.development firebase deploy",
-    "deploy:dev": "NODE_ENV=development env-cmd -f .env.development next build && firebase deploy -P staging --only functions:nextjseurope --force && firebase deploy -P staging --only hosting",
-    "deploy:prod": "NODE_ENV=production next build && firebase deploy -P prod --only functions:nextjseurope, --force && firebase deploy -P prod --only hosting"
+    "deploy": "env-cmd -f .env.development",
+    "deploy:dev": "NODE_ENV=development env-cmd -f .env.development next build",
+    "deploy:prod": "NODE_ENV=production next build"
   },
   "resolutions": {
     "@types/react": "17.0.2",
