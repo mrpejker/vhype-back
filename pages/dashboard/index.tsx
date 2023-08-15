@@ -4,17 +4,23 @@ import type { GetServerSidePropsContext, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { readContract } from '@wagmi/core'
 import EventsDashboard from '../../features/dashboard';
 import { getConnectedContract } from '../../utils/contract';
+import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants/endpoints';
+import eventsContractAbi from '../../abis/events-abi.json';
 
 interface EventsDashboardProps {
   ongoingEvents: any;
+  ongoingEventDatas: any;
 }
 
-const EventsDashboardPage: NextPage<EventsDashboardProps> = ({ ongoingEvents = [] }) => {
+const EventsDashboardPage: NextPage<EventsDashboardProps> = ({ ongoingEventDatas = [] }) => {
+  console.log('ongoingEventDatas', ongoingEventDatas);
   const { asPath } = useRouter();
   const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
   const URL = `${origin}${asPath}`;
+
   return (
     <main className="flex flex-col sm:justify-center sm:items-center pt-[120px] pb-[80px]">
       <Head>
@@ -35,7 +41,7 @@ const EventsDashboardPage: NextPage<EventsDashboardProps> = ({ ongoingEvents = [
           / Products / <b className="text-[#fff]">Dashboard</b>
         </span>
       </div>
-      <EventsDashboard ongoingEvents={ongoingEvents} />
+      <EventsDashboard ongoingEventDatas={ongoingEventDatas} />
     </main>
   );
 };
@@ -43,18 +49,27 @@ const EventsDashboardPage: NextPage<EventsDashboardProps> = ({ ongoingEvents = [
 export const getServerSideProps = async ({ res }: GetServerSidePropsContext) => {
   res.setHeader('Cache-Control', 'public, s-maxage=0, stale-while-revalidate=10');
   try {
-    const { contract } = await getConnectedContract();
-    const ongoingEvents = await contract.get_ongoing_events({ from_index: 0, limit: 100 });
+    const ongoingEventDatas = await readContract({
+      address: CAMINO_EVENTS_CONTRACT_ADDRESS,
+      abi: eventsContractAbi,
+      functionName: 'getOngoingEventDatas',
+      args: [
+        0, // fromIndex
+        100, // limit,
+        true, // isAll
+      ],
+      chainId: CAMINO_CHAIN_ID
+    });
     return {
       props: {
-        ongoingEvents,
+        ongoingEventDatas
       },
     };
   } catch (e) {
     console.log(e);
     return {
       props: {
-        ongoingEvents: [],
+        ongoingEventDatas: [],
       },
     };
   }

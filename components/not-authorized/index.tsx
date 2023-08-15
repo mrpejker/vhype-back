@@ -1,24 +1,14 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import { useWalletSelector } from '../../contexts/WalletSelectorContext';
-import ActiveLink from '../active-link';
+import { useWeb3Modal } from '@web3modal/react';
 
 const NotAuthorizedBlock: React.FC = () => {
-  const { modal } = useWalletSelector();
-  const router = useRouter();
+  const { open: openWalletConnectModal } = useWeb3Modal();
 
   const handleAuth = async () => {
-    modal.show();
-    setTimeout(() => {
-      const middleBtn: HTMLButtonElement | null = document.querySelector('.middleButton');
-      if (middleBtn) {
-        middleBtn.onclick = () => {
-          modal.hide();
-          router.push('/onboard');
-        };
-      }
-    }, 0);
+    openWalletConnectModal();
   };
+
   return (
     <div className="flex flex-col flex-wrap w-full overflow-x-auto" role="dialog">
       <h2 className="font-drukMedium text-black uppercase mb-2">You are not authorized</h2>
@@ -27,11 +17,7 @@ const NotAuthorizedBlock: React.FC = () => {
         <button onClick={handleAuth} className="cursor-pointer text-[#019FFF] underline hover:no-underline">
           {' '}
           Sign In
-        </button>{' '}
-        or{' '}
-        <ActiveLink href="/onboard">
-          <span className="cursor-pointer text-[#019FFF] underline hover:no-underline">Create new account</span>
-        </ActiveLink>
+        </button>
       </p>
     </div>
   );

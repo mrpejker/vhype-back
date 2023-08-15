@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Collection } from '../../models/Event';
+import { IEventData } from '../../models/Event';
 import { formatTimeStampToLocaleDateString } from '../../utils';
 
 interface EventRowProps {
@@ -43,7 +43,7 @@ const EventRow: React.FC<EventRowProps> = ({
 };
 
 interface EventTableProps {
-  events: Collection[];
+  events: IEventData[];
 }
 
 const EventTable: React.FC<EventTableProps> = ({ events }) => {
@@ -59,15 +59,15 @@ const EventTable: React.FC<EventTableProps> = ({ events }) => {
         </tr>
       </thead>
       <tbody>
-        {events.map((event: Collection, index: number) => (
+        {events.map((event: IEventData, index: number) => (
           <EventRow
             key={String(index)}
-            event_id={event[0]}
-            event_name={event[1].event_name}
-            total_users={event[3].total_users}
-            questsLength={event[1].quests.length}
-            start_time={event[1].start_time}
-            finish_time={event[1].finish_time}
+            event_id={Number(event.eventId)}
+            event_name={event.eventName}
+            total_users={Number(event.totalUsers)}
+            questsLength={1}
+            start_time={Number(event.startTime)}
+            finish_time={Number(event.finishTime)}
           />
         ))}
       </tbody>

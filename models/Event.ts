@@ -1,6 +1,6 @@
+import { BigNumber } from 'ethers';
+
 export interface Quest {
-  qr_prefix: string;
-  qr_prefix_len: number;
   reward_description: string;
   reward_title: string;
   reward_uri: string;
@@ -10,12 +10,12 @@ export interface CollectionData {
   event_description: string;
   event_name: string;
   finish_time: number;
-  quests: Quest[];
+  quest: Quest;
   start_time: number;
 }
 
 export interface CollectionFormData extends CollectionData {
-  files: File[];
+  file: File | undefined;
 }
 
 export interface CollectionStats {
@@ -46,4 +46,15 @@ export interface Collection {
   1: CollectionData;
   2: CollectionSettings;
   3: CollectionStats;
+}
+
+export interface IEventData {
+  eventId: BigNumber;
+  startTime: BigNumber;
+  finishTime: BigNumber;
+  totalUsers: BigNumber;
+  eventOwner: string;
+  eventName: string;
+  eventDescription: string;
+  isAvailable: boolean;
 }

@@ -7,6 +7,8 @@ import type {
   // NextWebVitalsMetric
 } from 'next/app';
 import App, { AppContext } from 'next/app';
+import { Web3Modal } from '@web3modal/react';
+import { WagmiConfig } from 'wagmi';
 
 import { withTRPC } from '@trpc/next';
 import { AppRouter } from './api/trpc/[trpc]';
@@ -18,6 +20,7 @@ import Header from '../components/header';
 import Footer from '../components/footer';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { defaultChain, ethereumClient, projectId, wagmiConfig } from '../utils/wagmi';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -43,11 +46,25 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   try {
     return (
-      <WalletSelectorContextProvider>
-        <Header />
-        <Component {...pageProps} />
-        <Footer />
-      </WalletSelectorContextProvider>
+      <>
+        <WagmiConfig config={wagmiConfig}>
+          <WalletSelectorContextProvider>
+            <Header />
+            <Component {...pageProps} />
+            <Footer />
+          </WalletSelectorContextProvider>
+        </WagmiConfig>
+
+        <Web3Modal
+          themeMode='light'
+          projectId={projectId}
+          ethereumClient={ethereumClient}
+          defaultChain={defaultChain}
+          chainImages={{
+            '501': '/cam-token.svg'
+          }}
+        />
+      </>
     );
   } catch (err) {
     console.log(err);

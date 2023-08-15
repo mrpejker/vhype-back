@@ -2,18 +2,21 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useCallback, useEffect, useState, useRef, RefObject } from 'react';
 import { useRouter } from 'next/router';
+import { useWeb3Modal } from '@web3modal/react';
+import { useAccount, useDisconnect } from 'wagmi';
 import { navMenuItems } from './header-menu';
 import ActiveLink from '../active-link';
 import SocialLinks from './social-links';
 import HeaderSettingsButton from './settings-button';
 import NavButtons from './nav-buttons';
 import BurgerMenuIcon from '../icons/BurgerMenuIcon';
-import { useWalletSelector } from '../../contexts/WalletSelectorContext';
 import DropdownMenu, { MenuType } from './dropdown-menu';
-import { socialContractName, socialContractMethods } from '../../utils/contract-methods';
-import { getConnectedContract } from '../../utils/contract';
 
 const Header: React.FC = () => {
+  const { isConnected, address } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { open: openWalletConnectModal } = useWeb3Modal();
+
   // Dropdown
   const [scrolling, setScrolling] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -29,60 +32,12 @@ const Header: React.FC = () => {
     router.pathname === '/vranda';
 
   const headerRef: RefObject<HTMLInputElement> = useRef(null);
-  // Handling Auth Flow
-  const { selector, modal, accountId } = useWalletSelector();
-  const [avatar, setAvatar] = useState<string | null>(null);
-
-  const handleSignIn = async () => {
-    modal.show();
-    setTimeout(() => {
-      const middleBtn: HTMLButtonElement | null = document.querySelector('.middleButton');
-      if (middleBtn) {
-        middleBtn.onclick = () => {
-          modal.hide();
-          router.push('/onboard');
-        };
-      }
-    }, 0);
-  };
 
   const handleSignOut = useCallback(async () => {
-    setActiveMenu({ title: '', type: '' });
-    setOpen(false);
-    const wallet = await selector.wallet();
-
-    wallet.signOut().catch((err: Error) => {
-      console.log('Failed to sign out');
-      console.error(err);
-    });
-  }, [selector]);
-
-  useEffect(() => {
-    try {
-      const updateAvatar = async () => {
-        try {
-          // Get data using contract call
-          const { contract } = await getConnectedContract(socialContractName, socialContractMethods);
-          const result = await contract.get({ keys: [`${accountId}/vself/**`] });
-          if (!result.hasOwnProperty(accountId)) {
-            throw 'Undefined';
-          }
-          // Update avatar url
-          if (result && result[`${accountId}`].vself.avatar_url) {
-            const avatar_url = result[`${accountId}`].vself.avatar_url;
-            setAvatar(avatar_url);
-          }
-        } catch (err) {
-          console.log('Error fetching data: ', err);
-        }
-      };
-
-      // Update avatar if accountId exists
-      accountId && updateAvatar();
-    } catch (err) {
-      console.log(err);
+    if (isConnected) {
+      disconnect();
     }
-  }, [accountId]);
+  }, [isConnected]);
 
   // Dropdown Menu Handling
   // Place Header Background While Scrolling
@@ -140,19 +95,6 @@ const Header: React.FC = () => {
     setOpen(!open);
   };
 
-  const toggleSettingsMenu = () => {
-    if (!accountId) {
-      handleSignIn();
-      return;
-    }
-    if (open && activeMenu.type !== MenuType.Settings) {
-      setActiveMenu({ title: '', type: MenuType.Settings });
-      return;
-    }
-    setOpen(!open);
-    setActiveMenu({ title: '', type: MenuType.Settings });
-  };
-
   // Prepareing CSS Styles
   const logoClassName = 'font-grotesk text-[25px] ' + (isAbout ? 'text-[#343434]' : 'text-[#41F092]');
   let navClassName = 'flex flex-col fixed top-0 z-50 py-4 w-full items-center transition-colors duration-500  ';
@@ -180,10 +122,8 @@ const Header: React.FC = () => {
         <div className="flex flex-row md:grow max-w-[250px] items-center">
           <SocialLinks isColored={isAbout} />
           <HeaderSettingsButton
-            avatar={avatar}
-            accountId={accountId}
             isColored={isAbout}
-            toggleSettings={toggleSettingsMenu}
+            toggleSettings={openWalletConnectModal}
           />
           <button type="button" onClick={toggleBurgerMenu} className="items-center sm:hidden ml-3">
             <BurgerMenuIcon className="fill-white" />
@@ -193,7 +133,7 @@ const Header: React.FC = () => {
       <DropdownMenu
         isOpened={open}
         isAbout={isAbout}
-        accountId={accountId}
+        address={address}
         openSubmenu={openSubmenu}
         handleSignOut={handleSignOut}
         activemenu={activeMenu}

@@ -55,7 +55,7 @@ export const getRandomHashString = (): string => {
  * @returns {string} - The formatted date string.
  */
 export const formatTimeStampToLocaleDateString = (timestamp: number): string => {
-  return new Date(timestamp / 1000000).toLocaleDateString();
+  return new Date(timestamp * 1000).toLocaleDateString();
 };
 
 /**
@@ -64,7 +64,7 @@ export const formatTimeStampToLocaleDateString = (timestamp: number): string => 
  * @returns {string} - The formatted time string.
  */
 export const formatTimeStampToLocaleTimeString = (timestamp: number): string => {
-  return new Date(timestamp / 1000000).toLocaleTimeString();
+  return new Date(timestamp * 1000).toLocaleTimeString();
 };
 
 /**
@@ -164,10 +164,33 @@ export const downloadQR = (qrString: string): void => {
  * @param {File} file - The file to be uploaded to IPFS.
  * @returns {Promise<string>} - A promise that resolves with the CID of the uploaded file.
  */
-export const uploadImageToIPFS = async (file: File) => {
+export const uploadImageToIPFS = async (file: File): Promise<string> => {
   const client = new NFTStorage({ token: process.env.NFT_STORAGE_API_KEY ?? '' });
   const arrayBuffer = await file.arrayBuffer();
   const blobData = new Blob([new Uint8Array(arrayBuffer)], { type: file.type });
   const cid = await client.storeBlob(blobData);
   return cid;
+};
+
+/**
+ * Uploads the given metadata to IPFS using NFT.Storage.
+ * @param {string} name - The name of the given NFT.
+ * @param {string} description - The description of the given NFT.
+ * @param {File} imageFile - The file to be uploaded to IPFS.
+ * @returns {Promise<string>} - A promise that resolves with the CID of the uploaded file.
+ */
+export const uploadMetadataToIPFS = async (
+  name: string,
+  description: string,
+  imageFile: File
+): Promise<string> => {
+  const client = new NFTStorage({ token: process.env.NFT_STORAGE_API_KEY ?? '' });
+
+  const metadata = await client.store({
+    name: name,
+    description: description,
+    image: imageFile
+  });
+
+  return "https://nftstorage.link/ipfs/" + metadata.url?.split('//')[1]!;
 };

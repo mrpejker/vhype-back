@@ -9,16 +9,7 @@ import QuestComponent, { QuestChangeCallback } from './quests';
 import UploadImageButton from '../../components/uploadImageButton';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 
-// Texts which used in checkbox list
-const switchLabels: string[] = [
-  'Authorization is needed for this event',
-  'Make token transferable',
-  'Limited collection',
-];
-
 const initialQuest: Quest = {
-  qr_prefix: '',
-  qr_prefix_len: 0,
   reward_description: '',
   reward_title: 'NFT Reward #1',
   reward_uri: '',
@@ -27,10 +18,10 @@ const initialQuest: Quest = {
 const initialEventFormState: CollectionFormData = {
   event_name: '',
   event_description: '',
-  quests: [initialQuest],
+  quest: initialQuest,
   start_time: new Date().getTime() * 1000000,
   finish_time: (new Date().getTime() + 86400000) * 1000000,
-  files: [],
+  file: undefined,
 };
 
 interface EventFormProps {
@@ -42,7 +33,7 @@ interface EventFormProps {
 const EventForm: React.FC<EventFormProps> = ({ submitForm, event_data, toggle }) => {
   const [eventFormState, setEventFormState] = useState<CollectionFormData>(event_data || initialEventFormState);
 
-  const { event_name, event_description, quests, start_time, finish_time, files } = eventFormState;
+  const { event_name, event_description, quest, start_time, finish_time, file } = eventFormState;
 
   // New Event Form Handlers
   const onEventTitleChange = (event: React.FormEvent<HTMLInputElement>): void => {
@@ -64,31 +55,15 @@ const EventForm: React.FC<EventFormProps> = ({ submitForm, event_data, toggle })
   };
 
   // Quest/Actions Form Handlers
-  const onQuestChange: QuestChangeCallback = (index, field, value): void => {
+  const onQuestChange: QuestChangeCallback = (field, value): void => {
     setEventFormState((prevState) => ({
       ...prevState,
-      quests: prevState.quests.map((q, i) => (i === index ? { ...q, [field]: value } : q)),
+      quest: { ...prevState.quest, [field]: value },
     }));
   };
 
-  const addNewQuest = (): void => {
-    setEventFormState((prevState) => ({
-      ...prevState,
-      quests: [...prevState.quests, { ...initialQuest, reward_title: `New Quest #${prevState.quests.length + 1}` }],
-    }));
-  };
-
-  const removeQuest = (index: number): void => {
-    setEventFormState((prevState) => ({
-      ...prevState,
-      quests: prevState.quests.filter((_, i) => i !== index),
-    }));
-  };
-
-  const setFilesArray = (file: File, index: number) => {
-    const newFilesArray = [...files];
-    newFilesArray[index] = file;
-    setEventFormState((prevState) => ({ ...prevState, files: newFilesArray }));
+  const setFile = (file: File) => {
+    setEventFormState((prevState) => ({ ...prevState, file: file }));
   };
 
   // Submitting Form
@@ -101,8 +76,8 @@ const EventForm: React.FC<EventFormProps> = ({ submitForm, event_data, toggle })
       event_description,
       finish_time,
       start_time,
-      quests,
-      files,
+      quest,
+      file,
     });
   };
 
@@ -158,57 +133,27 @@ const EventForm: React.FC<EventFormProps> = ({ submitForm, event_data, toggle })
             <CalendarIcon />
           </label>
         </span>
-        {toggle &&
-          switchLabels.map((value, index) => (
-            <div className="flex gap-4" key={index}>
-              <input
-                className="cursor-pointer  dark:border-gray-600 peer-checked:bg-blue-600"
-                type="checkbox"
-                role="switch"
-                id={'flexSwitchCheckDefault' + index}
-                onChange={() => {
-                  toggle(index);
-                }}
-              />
-              <label className="form-check-label inline-block text-gray-800" htmlFor={'flexSwitchCheckDefault' + index}>
-                {value}
-              </label>
-            </div>
-          ))}
       </div>
 
-      {quests.map((quest, index) => (
-        <div key={index} className="flex-col flex mb-4 p-5 rounded-xl bg-white md:mb-0  relative">
-          <h5 className="font-drukMedium uppercase text-black text-xl mb-2">NFT Reward</h5>
-          <div className="flex flex-col relative">
-            <UploadImageButton
-              file={files[index]}
-              onImageSet={(file: File | null): void => {
-                if (file) {
-                  setFilesArray(file, index);
-                }
-              }}
-            />
-            <QuestComponent
-              quest={quest}
-              onQuestChange={onQuestChange}
-              index={index}
-              removable={quests.length >= 2}
-              removeQuest={removeQuest}
-              setFilesArray={setFilesArray}
-            />
-          </div>
+      <div className="flex-col flex mb-4 p-5 rounded-xl bg-white md:mb-0  relative">
+        <h5 className="font-drukMedium uppercase text-black text-xl mb-2">NFT Reward</h5>
+        <div className="flex flex-col relative">
+          <UploadImageButton
+            file={file}
+            onImageSet={(file: File | null): void => {
+              if (file) {
+                setFile(file);
+              }
+            }}
+          />
+          <QuestComponent
+            quest={quest}
+            onQuestChange={onQuestChange}
+            setFile={setFile}
+          />
         </div>
-      ))}
+      </div>
       <div className="flex flex-col p-5 rounded-xl bg-white relative justify-center h-full">
-        <button
-          type="button"
-          onClick={addNewQuest}
-          //className="flex h-[40px] w-[165px] max-[500px]:w-full flex-col mx-[5px] max-[500px]:mt-[10px] justify-center items-center text-[14px] font-inter bg-transparent border-[2px] border-[#41F092] text-[#3D3D3D] hover:text-white font-medium text-xs leading-tight rounded-full hover:bg-[#019FFF] focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
-          className="flex my-4 self-center px-6 py-2.5 bg-transparent border-[1px] border-[#019FFF] text-[#019FFF] hover:text-white font-medium text-xs leading-tight uppercase rounded-full hover:bg-[#019FFF] outline-none transition duration-150 ease-in-out"
-        >
-          Add NFT Reward
-        </button>
         <button
           type="submit"
           className="flex my-4 self-center px-6 py-2.5 bg-transparent border-[1px] border-[#019FFF] text-[#019FFF] hover:text-white font-medium text-xs leading-tight uppercase rounded-full hover:bg-[#019FFF] outline-none transition duration-150 ease-in-out"

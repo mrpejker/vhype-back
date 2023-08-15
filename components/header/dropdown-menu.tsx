@@ -9,7 +9,7 @@ interface DropdownMenuProps {
   openSubmenu: (title: string) => void;
   handleSignOut: () => void;
   isAbout: boolean;
-  accountId: string | null;
+  address: `0x${string}` | undefined;
 }
 
 export enum MenuType {
@@ -24,7 +24,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
   openSubmenu,
   isAbout,
   handleSignOut,
-  accountId,
+  address,
 }) => {
   if (!isOpened) return null;
   const isProducts = activemenu.title === 'Products';
@@ -75,7 +75,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
     case MenuType.Settings:
       return (
         <div className="flex flex-col max-w-[1240px] mx-auto w-full p-[20px] items-start sm:items-end">
-          <p className="font-interBold mb-[10px]">{accountId}</p>
+          <p className="font-interBold mb-[10px]">{address}</p>
           <button
             type="button"
             onClick={handleSignOut}

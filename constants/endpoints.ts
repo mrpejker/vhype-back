@@ -36,3 +36,7 @@ const APIURL_TESTNET = 'https://api.thegraph.com/subgraphs/name/ilerik/near-soci
 const APIURL_MAINNET = 'https://api.thegraph.com/subgraphs/name/ilerik/near-social-mainnet';
 export const APIURL = isEnvProd ? APIURL_MAINNET : APIURL_TESTNET;
 export const WEBSITE_URL = isEnvProd ? Endpoints.PROD_URL : Endpoints.TESTNET_URL;
+
+// Events contract address
+export const CAMINO_EVENTS_CONTRACT_ADDRESS = '0xbc35B583C765540C852380D55bB989e942CC805C';
+export const CAMINO_CHAIN_ID = 80001;

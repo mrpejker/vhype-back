@@ -1,35 +1,34 @@
 /* eslint-disable @next/next/no-img-element */
 import { useRouter } from 'next/router';
-import React from 'react';
-import { useWalletSelector } from '../../contexts/WalletSelectorContext';
+import React, { useEffect, useState } from 'react';
+import { useWeb3Modal } from '@web3modal/react';
+import { useAccount, useDisconnect } from 'wagmi';
 import ActiveLink from '../active-link';
 import SocialLinks from '../header/social-links';
 
 const Footer: React.FC = () => {
   const router = useRouter();
-  const { modal, accountId, selector } = useWalletSelector();
+  const { address } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { open } = useWeb3Modal();
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (address) {
+      setIsConnected(true);
+    } else {
+      setIsConnected(false);
+    }
+  }, [address]);
 
   const handleAuth = async () => {
-    if (!accountId) {
-      modal.show();
-      setTimeout(() => {
-        const middleBtn: HTMLButtonElement | null = document.querySelector('.middleButton');
-        if (middleBtn) {
-          middleBtn.onclick = () => {
-            modal.hide();
-            router.push('/onboard');
-          };
-        }
-      }, 0);
+    if (!isConnected) {
+      open();
     } else {
-      const wallet = await selector.wallet();
-
-      wallet.signOut().catch((err: Error) => {
-        console.log('Failed to sign out');
-        console.error(err);
-      });
+      disconnect();
     }
   };
+
   const isLanding = router.pathname === '/';
   const isAbout =
     router.pathname === '/about' ||
@@ -133,7 +132,7 @@ const Footer: React.FC = () => {
                 'bg-[#41F092] text-black hover:border-[#41F092]'
               }
             >
-              {accountId ? 'Sign Out' : 'Sign In'}
+              {isConnected ? 'Sign Out' : 'Sign In'}
             </button>
           </div>
         </div>

@@ -1,30 +1,28 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { writeContract } from '@wagmi/core';
 import Loader from '../../components/loader';
 import Modal from '../../components/modal';
 import ErrorCreateMessage from './error-create';
 import EventForm from './event-form';
-import { utils } from 'near-api-js';
-import { hash, resizeFile, uploadImageToIPFS } from '../../utils';
+import { resizeFile, uploadMetadataToIPFS } from '../../utils';
 import { CollectionFormData, Quest } from '../../models/Event';
-import { useWalletSelector } from '../../contexts/WalletSelectorContext';
-import { logFirebaseAnalyticsEvent, setFirestoreDocumentData } from '../../utils/firebase';
+import { logFirebaseAnalyticsEvent } from '../../utils/firebase';
 import { AnalyticsEvents } from '../../constants/analytics-events';
-
-const BOATLOAD_OF_GAS = utils.format.parseNearAmount('0.00000000003')!;
+import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants/endpoints';
+import eventsContractAbi from "../../abis/events-abi.json";
 
 const CreateNewEvent: React.FC = () => {
-  const { selector, accountId } = useWalletSelector();
-
   const [eventId, setEventId] = useState<number | null>(null);
   const [event_data, setEvenData] = useState<CollectionFormData | null>(null);
   const [isError, setIsError] = useState<boolean>(false);
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
   const [isTransferable, setIsTransferable] = useState<boolean>(false);
   const [isLimited, setIsLimited] = useState<boolean>(false);
+  const [isWarning, setIsWarning] = useState<boolean>(false);
+  const [warningItems, setWarningItems] = useState<string[]>([]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [claimStrings, setClaimStrings] = useState<string[]>([]);
 
   const toggleEventPrivateSettings = (switchIndex: number) => {
     switch (switchIndex) {
@@ -47,87 +45,86 @@ const CreateNewEvent: React.FC = () => {
   // Uploading Images to IPFS and Start New Event after success
   const createNewEvent = async (eventData: CollectionFormData) => {
     try {
+      const { event_description, event_name, finish_time, start_time, quest, file } = eventData;
+
+      console.log('eventData', eventData);
+
+      let isValid = true;
+      const warningItems = [];
+
+      if (!event_name) {
+        isValid = false;
+        warningItems.push('Event title');
+      }
+
+      if (!event_description) {
+        isValid = false;
+        warningItems.push('Event Description');
+      }
+
+      if (!file) {
+        isValid = false;
+        warningItems.push('NFT image');
+      }
+
+      if (!quest?.reward_title) {
+        isValid = false;
+        warningItems.push('Reward title');
+      }
+
+      if (!quest?.reward_description) {
+        isValid = false;
+        warningItems.push('Reward description');
+      }
+
+      if (!isValid) {
+        setWarningItems(warningItems);
+        setIsWarning(true);
+
+        return;
+      }
+
       setIsLoading(true);
       setEvenData({
         ...eventData,
       });
-      // Resize Images Before Upload
-      const { event_description, event_name, finish_time, start_time, quests, files } = eventData;
-      const resizedImgsPromises = files.map(resizeFile);
-      const resizedFiles = await Promise.all(resizedImgsPromises);
 
-      // Upload Images To IPFS And Getiing Download URLS
-      const promises = resizedFiles.map(uploadImageToIPFS);
-      const cids = await Promise.all(promises);
+      // Resize Images Before Upload
+      const resizedFile = await resizeFile(file!);
+
+      // Upload metadata To IPFS And Getiing Download URLS
+      const meatadataUri = await uploadMetadataToIPFS(quest.reward_title, quest.reward_description, resizedFile);
+      console.log('meatadataUri', meatadataUri);
 
       // Placing CIDs of Images to Request
-      const strings: string[] = [];
-      const questsWithUrls = quests
-        .map((quest: Quest, index: number) => {
-          if (cids[index] === undefined) return;
-          // Setting URLS of Uploaded Images To Quests
-          strings.push(quest.qr_prefix);
-          // TODO: refactor
-          // const hashedPrefix = hash(quest.qr_prefix);
-          const prefixLength = quest.qr_prefix.length;
-          return {
-            ...quest,
-            qr_prefix: quest.qr_prefix,
-            qr_prefix_len: prefixLength,
-            reward_uri: cids[index],
-          };
-        })
-        .filter(Boolean);
+      quest.reward_uri = meatadataUri;
+      console.log('quest', quest);
 
       // Starting New Event In NEAR
-      const wallet = await selector.wallet();
-
-      const result: any = await wallet
-        .signAndSendTransaction({
-          signerId: accountId!,
-          actions: [
-            {
-              type: 'FunctionCall',
-              params: {
-                methodName: 'start_event',
-                args: {
-                  event_data: {
-                    event_description,
-                    event_name,
-                    finish_time,
-                    start_time,
-                    quests: questsWithUrls,
-                  },
-                  collection_settings: {
-                    signin_request: isPrivate,
-                    transferability: isTransferable,
-                    limited_collection: isLimited,
-                  },
-                },
-                gas: BOATLOAD_OF_GAS,
-                deposit: utils.format.parseNearAmount('0')!,
-              },
-            },
-          ],
-        })
-        .catch((err: Error) => {
-          throw err;
-        });
-      // TODO: Need to refactor this.
-      const event_id = result.receipts_outcome[0].outcome.logs[0].split(' ')[8];
-      setFirestoreDocumentData('claims', String(event_id), {
-        claimStrings: strings,
-        isPrivate: Boolean(isPrivate),
+      const tx = await writeContract({
+        address: CAMINO_EVENTS_CONTRACT_ADDRESS,
+        abi: eventsContractAbi,
+        functionName: 'startEvent',
+        args: [
+          event_name,
+          event_description,
+          Math.floor(start_time / 10 ** 9),
+          Math.floor(finish_time / 10 ** 9),
+          ['qr_code', ...Object.values(quest)],
+        ],
+        chainId: CAMINO_CHAIN_ID
       });
-      logFirebaseAnalyticsEvent(AnalyticsEvents.NEW_EVENT_CREATED, {});
 
-      setClaimStrings(strings);
-      setEventId(Number(event_id));
+      console.log('tx', tx);
+
+      // // TODO: Need to refactor this.
+      // const event_id = result.receipts_outcome[0].outcome.logs[0].split(' ')[8];
+      // setEventId(Number(event_id));
+
       setIsLoading(false);
       setEvenData(null);
     } catch (err) {
       console.log(err);
-      logFirebaseAnalyticsEvent(AnalyticsEvents.NEW_EVENT_FAILED, { err });
       setIsError(true);
       setIsLoading(false);
     }
@@ -140,15 +137,25 @@ const CreateNewEvent: React.FC = () => {
 
   return (
     <section
-      className={`${
-        isLoading ? 'grid h-screen mt-[-100px] items-center justify-center relative' : 'flex grow justify-center w-full'
-      }`}
+      className={`${isLoading ? 'grid h-screen mt-[-100px] items-center justify-center relative' : 'flex grow justify-center w-full'
+        }`}
     >
       <Modal isOpen={Boolean(eventId)} onClose={closeModal}>
-        <SuccessCreateMessage eventId={eventId} claimStrings={claimStrings} />
+        <SuccessCreateMessage eventId={eventId} />
       </Modal>
       <Modal isOpen={isError} onClose={closeModal}>
         <ErrorCreateMessage />
+      </Modal>
+      <Modal isOpen={isWarning} onClose={() => {
+        setIsWarning(false);
+        setWarningItems([]);
+      }}>
+        <>
+          <h2 className="font-drukMedium text-orange-700 mb-4">Please input all informations.</h2>
+          <p className="text-[#3D3D3D]">
+            <b>{warningItems.join(", ")}</b> {warningItems.length > 1 ? 'are' : 'is'} missing.
+          </p>
+        </>
       </Modal>
       <Loader is_load={isLoading}>
         <EventForm submitForm={createNewEvent} event_data={event_data} toggle={toggleEventPrivateSettings} />
@@ -159,12 +166,11 @@ const CreateNewEvent: React.FC = () => {
 
 interface SuccessMessageProps {
   eventId: number | null;
-  claimStrings: string[];
 }
 
-const SuccessCreateMessage: React.FC<SuccessMessageProps> = ({ eventId, claimStrings }) => {
+const SuccessCreateMessage: React.FC<SuccessMessageProps> = ({ eventId }) => {
   const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
-  const claimLink = `${origin}/claim/${eventId}?strings=${claimStrings}`;
+  const claimLink = `${origin}/claim/${eventId}`;
   const copyToClipBoard = async () => {
     navigator.clipboard.writeText(claimLink);
   };

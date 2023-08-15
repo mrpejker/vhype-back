@@ -1,19 +1,30 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useAccount } from 'wagmi';
 import NotAuthorizedBlock from '../../components/not-authorized';
-import { useWalletSelector } from '../../contexts/WalletSelectorContext';
 
 import CreateNewEvent from '../../features/event-form';
 import PageLayout from '../../components/page-layout';
+import { useEffect, useState } from 'react';
 
 const NewEventPage: NextPage = () => {
+  const { address } = useAccount();
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+
   const { asPath } = useRouter();
   const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
   const URL = `${origin}${asPath}`;
-  const { accountId } = useWalletSelector();
 
-  if (!accountId) {
+  useEffect(() => {
+    if (address) {
+      setIsConnected(true);
+    } else {
+      setIsConnected(false);
+    }
+  }, [address]);
+
+  if (!isConnected) {
     return (
       <div className="flex justify-center min-h-screen items-center p-[20px]">
         <Head>
