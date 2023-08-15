@@ -10,7 +10,10 @@
     "quotes": ["error", "single"],
     "semi": ["error", "always"],
     "indent": "off",
-    "no-multi-spaces": ["error"]
+    "react/no-unescaped-entities": "off",
+    "@next/next/no-page-custom-font": "off",
+    "no-multi-spaces": ["error"],
+    "prettier/prettier": 0
   },
   "parserOptions": {
     "ecmaVersion": 6,

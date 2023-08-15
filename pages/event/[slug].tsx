@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { GetServerSidePropsContext, NextPage } from 'next';
-import { readContract } from '@wagmi/core'
+import { readContract } from '@wagmi/core';
 import PageLayout from '../../components/page-layout';
 import { getConnectedContract } from '../../utils/contract';
 import EventDetails from '../../features/events-details';

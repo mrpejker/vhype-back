@@ -9,7 +9,7 @@ interface EventConfirmProps {
 }
 
 const EventConfirm: React.FC<EventConfirmProps> = ({ buttonCallback, eventData }) => {
-  const { files, event_name, event_description, start_time, finish_time, quests } = eventData;
+  const { file, event_name, event_description, start_time, finish_time, quest } = eventData;
   return (
     <div className="flex flex-col relative overflow-auto">
       <div className="flex justify-center flex-col rounded-lg shadow-lg text-black bg-white">
@@ -38,36 +38,34 @@ const EventConfirm: React.FC<EventConfirmProps> = ({ buttonCallback, eventData }
       </div>
 
       <div className="flex w-full flex-row flex-wrap">
-        {quests.map((quest, index) => (
-          <div key={index} className="flex w-full md:w-1/4 mt-2 px-1">
-            <div className="flex flex-col w-full rounded-lg shadow-lg text-black bg-white p-4  hover:bg-gray-200 cursor-pointer">
-              <h3 className="font-bold">Quest #{index + 1}</h3>
-              <div
-                style={{
-                  width: '100%',
-                  height: 300,
-                  maxHeight: 300,
-                  backgroundImage:
-                    files !== undefined && files.length > 0 && files[index] !== undefined
-                      ? `url(${URL.createObjectURL(files[index])})`
-                      : 'none',
-                  backgroundSize: 'contain',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
-                }}
-              />
-              <span className="mb-2">
-                <b>Title:</b> {quest.reward_title}
-              </span>
-              <span className="mb-2">
-                <b>Description:</b> {quest.reward_description}
-              </span>
-              <span className="mb-2">
-                <b>QRLink:</b> {quest.qr_prefix}
-              </span>
-            </div>
+        <div className="flex w-full md:w-1/4 mt-2 px-1">
+          <div className="flex flex-col w-full rounded-lg shadow-lg text-black bg-white p-4  hover:bg-gray-200 cursor-pointer">
+            <h3 className="font-bold">Quest #1</h3>
+            <div
+              style={{
+                width: '100%',
+                height: 300,
+                maxHeight: 300,
+                backgroundImage:
+                  file !== undefined
+                    ? `url(${URL.createObjectURL(file)})`
+                    : 'none',
+                backgroundSize: 'contain',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+              }}
+            />
+            <span className="mb-2">
+              <b>Title:</b> {quest.reward_title}
+            </span>
+            <span className="mb-2">
+              <b>Description:</b> {quest.reward_description}
+            </span>
+            <span className="mb-2">
+              {/* <b>QRLink:</b> {quest.qr_prefix} */}
+            </span>
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );

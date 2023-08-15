@@ -108,8 +108,8 @@ const CreateNewEvent: React.FC = () => {
         abi: eventsContractAbi,
         functionName: 'startEvent',
         args: [
-          event_name,
-          event_description,
+          event_name as any,
+          event_description as any,
           Math.floor(start_time / 10 ** 9),
           Math.floor(finish_time / 10 ** 9),
           ['qr_code', ...Object.values(quest)],

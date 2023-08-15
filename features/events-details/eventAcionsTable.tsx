@@ -37,7 +37,7 @@ const EventActionsTable: React.FC<EventActionsTableProps> = ({ eventActions, eve
               {formatTimeStampToLocaleDateString(timestamp) + ' ' + formatTimeStampToLocaleTimeString(timestamp)}
             </td>
             <td className="text-sm px-4 py-2 whitespace-nowrap align-middle text-center hidden sm:table-cell">
-              {eventData?.quests[reward_index] ? (
+              {/* {eventData?.quests[reward_index] ? (
                 <IpfsImage
                   src={`${eventData?.quests[reward_index].reward_uri}`}
                   alt="reward"
@@ -45,7 +45,7 @@ const EventActionsTable: React.FC<EventActionsTableProps> = ({ eventActions, eve
                 />
               ) : (
                 <div style={{ width: 50, height: 50 }} />
-              )}
+              )} */}
             </td>
           </tr>
         ))}

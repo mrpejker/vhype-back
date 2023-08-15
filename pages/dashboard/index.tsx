@@ -4,7 +4,7 @@ import type { GetServerSidePropsContext, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { readContract } from '@wagmi/core'
+import { readContract } from '@wagmi/core';
 import EventsDashboard from '../../features/dashboard';
 import { getConnectedContract } from '../../utils/contract';
 import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants/endpoints';

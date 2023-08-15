@@ -66,11 +66,11 @@ const Claims: React.FC<ClaimsProps> = ({ claims, event_id, eventData }) => {
   };
 
   const openImgModal = (index: number) => {
-    const rewardImg = eventData?.quests[index].reward_uri;
-    dispatch({
-      type: ClaimWidgetActionKind.OPEN_IMG_MODAL,
-      payload: String(rewardImg),
-    });
+    // const rewardImg = eventData?.quests[index].reward_uri;
+    // dispatch({
+    //   type: ClaimWidgetActionKind.OPEN_IMG_MODAL,
+    //   payload: String(rewardImg),
+    // });
   };
 
   const openQRCodeModal = (index: number) => {
@@ -101,14 +101,14 @@ const Claims: React.FC<ClaimsProps> = ({ claims, event_id, eventData }) => {
       </Modal>
       <div className="flex flex-col w-full max-w-[1080px] mx-auto">
         <h2 className="font-drukMedium uppercase text-black text-[30px] mb-[25px]">QR Strings</h2>
-        <ClaimsList
+        {/* <ClaimsList
           event_id={event_id}
           eventData={eventData}
           claims={claims}
           imgCallback={openImgModal}
           qrbtnCallback={openQRCodeModal}
           claimBtnCallback={openClaimModal}
-        />
+        /> */}
       </div>
     </section>
   );
