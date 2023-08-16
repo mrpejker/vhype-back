@@ -6,6 +6,7 @@ import { readContract } from '@wagmi/core';
 import ClaimForm from '../../features/claims/claim-form';
 import PageLayout from '../../components/page-layout';
 import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants/endpoints';
+import { IEvent } from '../../models/Event';
 import eventsContractAbi from '../../abis/events-abi.json';
 
 interface ClaimPageProps {
@@ -13,22 +14,28 @@ interface ClaimPageProps {
 }
 const ClaimPage: NextPage<ClaimPageProps> = ({ eventId }) => {
   const [eventError, setEventError] = useState<boolean>(false);
+  const [eventInfo, setEventInfo] = useState<IEvent | undefined>(undefined);
   const { asPath } = useRouter();
 
   // Check that event exists
   useEffect(() => {
     const tryGetEventData = async () => {
-      const eventData = await readContract({
+      const eventInfo = await readContract({
         address: CAMINO_EVENTS_CONTRACT_ADDRESS,
         abi: eventsContractAbi,
-        functionName: 'getEventData',
+        functionName: 'getEvent',
         args: [
           eventId
         ],
         chainId: CAMINO_CHAIN_ID
       });
 
-      if (!eventData) setEventError(true);
+      if (!eventInfo) {
+        setEventError(true);
+      }
+      else {
+        setEventInfo(eventInfo as IEvent);
+      }
     };
 
     tryGetEventData();
@@ -53,7 +60,7 @@ const ClaimPage: NextPage<ClaimPageProps> = ({ eventId }) => {
       ) : (
         <section className="flex flex-col w-full items-center">
           <div className="flex flex-col w-full bg-white p-[20px] rounded-lg max-w-[600px] my-[40px]">
-            <ClaimForm eventId={Number(eventId)} />
+            <ClaimForm eventId={Number(eventId)} eventStats={eventInfo?.eventStats} />
           </div>
         </section>
       )}

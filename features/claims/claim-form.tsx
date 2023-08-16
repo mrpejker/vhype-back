@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useAccount } from 'wagmi';
+import { useAccount, useContractEvent } from 'wagmi';
 import { writeContract } from '@wagmi/core';
 import { useWeb3Modal } from '@web3modal/react';
 import Loader from '../../components/loader';
+import { IEventStats } from '../../models/Event';
 import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants/endpoints';
 import eventsContractAbi from "../../abis/events-abi.json";
 
@@ -11,9 +12,10 @@ const DEFAULT_ERROR_MESSAGE = 'Checkin failed. Please try again or feel free to 
 
 interface ClaimFormProps {
   eventId: number;
+  eventStats: IEventStats | undefined;
 }
 
-const ClaimForm: React.FC<ClaimFormProps> = ({ eventId }) => {
+const ClaimForm: React.FC<ClaimFormProps> = ({ eventId, eventStats }) => {
   const { address } = useAccount();
   const { open } = useWeb3Modal();
   const [userAddress, setUserAddress] = useState<`0x${string}` | undefined>(undefined);
@@ -22,8 +24,15 @@ const ClaimForm: React.FC<ClaimFormProps> = ({ eventId }) => {
   const [error, setError] = useState<string>(DEFAULT_ERROR_MESSAGE);
   const [isAuthError, setIsAuthError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [participants, setParticipants] = useState<string[]>([]);
   const router = useRouter();
   const { query } = router;
+
+  useEffect(() => {
+    if (eventStats) {
+      setParticipants(eventStats?.participants);
+    }
+  }, [eventStats]);
 
   useEffect(() => {
     if (query && query.errorMessage) {
@@ -62,6 +71,12 @@ const ClaimForm: React.FC<ClaimFormProps> = ({ eventId }) => {
       return;
     }
 
+    if (participants.includes(userAddress)) {
+      setIsLoading(false);
+      setIsSuccess(true);
+      return;
+    }
+
     try {
       const tx = await writeContract({
         address: CAMINO_EVENTS_CONTRACT_ADDRESS,
@@ -75,13 +90,32 @@ const ClaimForm: React.FC<ClaimFormProps> = ({ eventId }) => {
       });
 
       console.log('tx', tx);
-      setIsSuccess(true);
     } catch (err) {
       console.log(err);
       setIsError(true);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
+
+  const unwatch = useContractEvent({
+    address: CAMINO_EVENTS_CONTRACT_ADDRESS,
+    abi: eventsContractAbi,
+    eventName: 'Checkin',
+    listener(log) {
+      try {
+        if (log) {
+          setParticipants(current => {
+            return [...current, (log[0] as any).args.userAddress];
+          });
+
+          setIsSuccess(true);
+          setIsLoading(false);
+        }
+      } catch { }
+
+      if (log.length > 0) unwatch?.()
+    },
+  });
 
   return (
     <Loader is_load={isLoading}>

@@ -51,7 +51,15 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventStats, eventData, ques
         </Loader>
       </section>
 
-      {isOwnEvent && userAddress && <Claims eventId={Number(eventId)} eventData={eventData} quest={quest} />}
+      {
+        isOwnEvent && userAddress && isActive &&
+        <Claims
+          eventId={Number(eventId)}
+          eventData={eventData}
+          eventStats={eventStats}
+          quest={quest}
+        />
+      }
 
       <section className="flex flex-col w-full py-[40px] mb-4 overflow-y-auto bg-white rounded-[40px]">
         <Loader is_load={!eventActions}>

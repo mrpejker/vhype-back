@@ -149,8 +149,6 @@ contract VSelfEvents is ERC721URIStorage {
 
         uint256 eventId = block.timestamp + block.number;
 
-        require(!_isEventIdExist[eventId], "Already existed");
-
         _isEventIdExist[eventId] = true;
 
         newEventData.eventId = eventId;
@@ -208,6 +206,7 @@ contract VSelfEvents is ERC721URIStorage {
         );
 
         eventData.totalUsers++;
+        _hasUserClaimedRewards[_eventId][_recipient] = true;
 
         _eventIdToEventStats[_eventId].totalActions++;
         _eventIdToEventStats[_eventId].totalRewards++;
@@ -224,7 +223,7 @@ contract VSelfEvents is ERC721URIStorage {
 
         _mintNFT(_recipient, _eventIdToQuest[_eventId].rewardUri);
 
-        emit Checkin(msg.sender, _eventId);
+        emit Checkin(_recipient, _eventId);
     }
 
     /**

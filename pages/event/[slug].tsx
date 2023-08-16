@@ -14,6 +14,7 @@ interface EventDetailedPageProps {
   eventData: IEventData;
   eventStats: IEventStats;
   quest: IQuest;
+  isActive: boolean;
 }
 
 const EventDetailedPage: NextPage<EventDetailedPageProps> = ({
@@ -21,7 +22,8 @@ const EventDetailedPage: NextPage<EventDetailedPageProps> = ({
   eventData,
   eventStats,
   eventActions,
-  quest
+  quest,
+  isActive
 }) => {
   return (
     <PageLayout title={eventData?.eventName} description={eventData?.eventDescription} pageName="Dashboard">
@@ -31,7 +33,7 @@ const EventDetailedPage: NextPage<EventDetailedPageProps> = ({
         eventStats={eventStats}
         eventData={eventData}
         quest={quest}
-        isActive={true}
+        isActive={isActive}
       />
     </PageLayout>
   );
@@ -41,7 +43,7 @@ export const getServerSideProps = async ({ query, res }: GetServerSidePropsConte
   res.setHeader('Cache-Control', 'public, s-maxage=0, stale-while-revalidate=10');
   const event_id = query.slug;
 
-  const [eventInfo, eventActions] = await Promise.all([
+  const [eventInfo, eventActions, currentTimestamp] = await Promise.all([
     readContract({
       address: CAMINO_EVENTS_CONTRACT_ADDRESS,
       abi: eventsContractAbi,
@@ -61,16 +63,34 @@ export const getServerSideProps = async ({ query, res }: GetServerSidePropsConte
         100,
       ],
       chainId: CAMINO_CHAIN_ID
+    }),
+    readContract({
+      address: CAMINO_EVENTS_CONTRACT_ADDRESS,
+      abi: eventsContractAbi,
+      functionName: 'getCurrentTimestamp',
+      chainId: CAMINO_CHAIN_ID
     })
   ]);
+
+  let isActive = true;
+
+  const eventData: IEventData = (eventInfo as any)?.eventData;
+  if (eventData) {
+    if (eventData?.isAvailable && Number(eventData?.finishTime) >= Number(currentTimestamp)) {
+      isActive = true;
+    } else {
+      isActive = false;
+    }
+  }
 
   return {
     props: {
       eventId: Number(event_id),
-      eventData: (eventInfo as any)?.eventData,
+      eventData: eventData,
       eventStats: (eventInfo as any)?.eventStats,
       eventActions: eventActions,
       quest: (eventInfo as any)?.quest,
+      isActive,
     },
   };
 };

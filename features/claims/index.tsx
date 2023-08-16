@@ -2,7 +2,7 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import QRCode from 'react-qr-code';
 import Modal from '../../components/modal';
-import { IEventData, IQuest } from '../../models/Event';
+import { IEventData, IEventStats, IQuest } from '../../models/Event';
 import { downloadQR } from '../../utils';
 import ClaimForm from './claim-form';
 import ClaimsList from './claims-list';
@@ -12,6 +12,7 @@ import axios from 'axios';
 interface ClaimsProps {
   eventId: number;
   eventData: IEventData | undefined;
+  eventStats: IEventStats | undefined;
   quest: IQuest | undefined;
 }
 
@@ -54,7 +55,7 @@ const claimReducer = (state: ClaimWidgetState, action: ClaimWidgetAction) => {
   }
 };
 
-const Claims: React.FC<ClaimsProps> = ({ eventId, eventData, quest }) => {
+const Claims: React.FC<ClaimsProps> = ({ eventId, eventData, eventStats, quest }) => {
   const [rewardImg, setRewardImg] = useState<string>('');
   const [{ qrString, imgSrc, claimString }, dispatch] = useReducer(claimReducer, initialState);
 
@@ -112,7 +113,7 @@ const Claims: React.FC<ClaimsProps> = ({ eventId, eventData, quest }) => {
         <DownloadQR qrString={String(qrString)} />
       </Modal>
       <Modal isOpen={!!claimString} onClose={closeModal}>
-        <ClaimForm eventId={eventId} />
+        <ClaimForm eventId={eventId} eventStats={eventStats} />
       </Modal>
       <div className="flex flex-col w-full max-w-[1080px] mx-auto">
         <h2 className="font-drukMedium uppercase text-black text-[30px] mb-[25px]">QR Strings</h2>
