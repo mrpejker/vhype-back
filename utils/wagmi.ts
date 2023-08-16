@@ -25,8 +25,8 @@ export const columbus = {
         },
     },
     blockExplorers: {
-        etherscan: { name: 'CaminoScan', url: 'https://suite.camino.network/explorer/c-chain' },
-        default: { name: 'CaminoScan', url: 'https://suite.camino.network/explorer/c-chain' },
+        etherscan: { name: 'CaminoScan', url: 'https://suite.camino.network/explorer/columbus/c-chain' },
+        default: { name: 'CaminoScan', url: 'https://suite.camino.network/explorer/columbus/c-chain' },
     },
 } as Chain;
 
@@ -50,8 +50,8 @@ export const camino = {
         },
     },
     blockExplorers: {
-        etherscan: { name: 'CaminoScan', url: 'https://suite.camino.network/explorer/c-chain' },
-        default: { name: 'CaminoScan', url: 'https://suite.camino.network/explorer/c-chain' },
+        etherscan: { name: 'CaminoScan', url: 'https://suite.camino.network/explorer/camino/c-chain' },
+        default: { name: 'CaminoScan', url: 'https://suite.camino.network/explorer/camino/c-chain' },
     },
 } as Chain;
 
