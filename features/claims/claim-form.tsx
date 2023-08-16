@@ -1,31 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import ActiveLink from '../../components/active-link';
+import { useAccount } from 'wagmi';
+import { writeContract } from '@wagmi/core';
+import { useWeb3Modal } from '@web3modal/react';
 import Loader from '../../components/loader';
-import { AnalyticsEvents } from '../../constants/analytics-events';
-import { useWalletSelector } from '../../contexts/WalletSelectorContext';
-import { logFirebaseAnalyticsEvent } from '../../utils/firebase';
-import { getConnectedContract } from '../../utils/contract';
-import { mainContractMethods, mainContractName } from '../../utils/contract-methods';
+import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants/endpoints';
+import eventsContractAbi from "../../abis/events-abi.json";
 
 const DEFAULT_ERROR_MESSAGE = 'Checkin failed. Please try again or feel free to reach us via email: info@vself.app';
 
 interface ClaimFormProps {
-  event_id: number;
-  account_id?: string | null;
-  claimString?: string;
-  isPrivate?: boolean;
+  eventId: number;
 }
 
-const ClaimForm: React.FC<ClaimFormProps> = ({ event_id, claimString, isPrivate }) => {
-  const { modal, accountId, selector } = useWalletSelector();
-  const [nearId, setNearId] = useState<string>('');
+const ClaimForm: React.FC<ClaimFormProps> = ({ eventId }) => {
+  const { address } = useAccount();
+  const { open } = useWeb3Modal();
+  const [userAddress, setUserAddress] = useState<`0x${string}` | undefined>(undefined);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [error, setError] = useState<string>(DEFAULT_ERROR_MESSAGE);
   const [isAuthError, setIsAuthError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const claimLink = `/api/checkin?eventid='${event_id}'&nearid='${nearId}'&qr='${claimString}'`;
   const router = useRouter();
   const { query } = router;
 
@@ -37,73 +33,52 @@ const ClaimForm: React.FC<ClaimFormProps> = ({ event_id, claimString, isPrivate 
   }, [query]);
 
   useEffect(() => {
-    if (accountId) {
-      setNearId(accountId);
+    setUserAddress(address);
+
+    if (address) {
+      setIsAuthError(false);
     }
-  }, [accountId]);
+  }, [address]);
 
   const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;
     setIsAuthError(false);
     setIsSuccess(false);
     setIsError(false);
-    setNearId(value);
+    setUserAddress(`0x${value}`);
   };
 
   const handleAuth = async () => {
-    modal.show();
+    open();
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
-    if (!claimString) {
-      setIsLoading(false);
-      setIsAuthError(true);
-      return;
-    }
-    if (isPrivate && !accountId) {
+
+    if (!userAddress) {
       setIsLoading(false);
       setIsAuthError(true);
       return;
     }
 
     try {
-      const { contract } = await getConnectedContract();
-      const settings = await contract.get_collection_settings({ event_id });
-      if (settings && settings.limited_collection) {
-        const wallet = await selector.wallet();
-        await wallet.signAndSendTransaction({
-          signerId: accountId!,
-          receiverId: mainContractName,
-          actions: [
-            {
-              type: 'FunctionCall',
-              params: {
-                methodName: 'checkin',
-                args: { event_id: event_id, username: nearId, request: claimString },
-                gas: '300000000000000',
-                deposit: '25000000000000000000000',
-              },
-            },
-          ],
-        });
+      const tx = await writeContract({
+        address: CAMINO_EVENTS_CONTRACT_ADDRESS,
+        abi: eventsContractAbi,
+        functionName: 'checkin',
+        args: [
+          eventId,
+          userAddress,
+        ],
+        chainId: CAMINO_CHAIN_ID
+      });
 
-        // TO DO : Check if transaction is successfull or not and log analytics
-      } else {
-        // Claim using server
-        const response = await fetch(claimLink);
-        const result = await response.json();
-        if (result.index > -1) {
-          setIsSuccess(true);
-          logFirebaseAnalyticsEvent(AnalyticsEvents.CLAIM_REWARD_SUCCESS, {});
-        } else {
-          logFirebaseAnalyticsEvent(AnalyticsEvents.CLAIM_REWARD_FAILED, {});
-          setIsError(true);
-        }
-      }
+      console.log('tx', tx);
+      setIsSuccess(true);
     } catch (err) {
       console.log(err);
+      setIsError(true);
     }
     setIsLoading(false);
   };
@@ -113,7 +88,7 @@ const ClaimForm: React.FC<ClaimFormProps> = ({ event_id, claimString, isPrivate 
       <>
         <div className="text-left">
           <h2 className="font-drukMedium uppercase text-black text-xl mb-2">Claim Reward</h2>
-          <p className="text-[#3D3D3D]">Provide an Near ID to get reward</p>
+          <p className="text-[#3D3D3D]">Provide a CAMINO address to get reward</p>
         </div>
         {isSuccess && (
           <p className="text-center font-drukMedium uppercase text-black text-xl my-2">Succesfully Claimed</p>
@@ -139,10 +114,10 @@ const ClaimForm: React.FC<ClaimFormProps> = ({ event_id, claimString, isPrivate 
           <form className="flex flex-row items-center" onSubmit={handleSubmit}>
             <input
               className="px-[10px] py-[5px] mr-2 w-full text-black bg-transparent border border-solid border-gray-300 rounded-full transition ease-in-out focus:border-black focus:outline-none"
-              disabled={isPrivate}
-              value={nearId}
+              disabled={true}
+              value={userAddress}
               onChange={handleInputChange}
-              placeholder="Near ID"
+              placeholder="Wallet Address"
               type="text"
             />
             <button
@@ -153,14 +128,6 @@ const ClaimForm: React.FC<ClaimFormProps> = ({ event_id, claimString, isPrivate 
               Claim
             </button>
           </form>
-          {!accountId && (
-            <p className="text-[#3D3D3D] mt-[10px]">
-              Don&apos;t have an account? Use our{' '}
-              <ActiveLink href="/onboard" className="underline hover:no-underline">
-                <span>onboarding page</span>
-              </ActiveLink>
-            </p>
-          )}
         </div>
       </>
     </Loader>

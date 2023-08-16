@@ -1,19 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import QRCode from 'react-qr-code';
 import Modal from '../../components/modal';
-import { AnalyticsEvents } from '../../constants/analytics-events';
-import { CollectionData } from '../../models/Event';
+import { IEventData, IQuest } from '../../models/Event';
 import { downloadQR } from '../../utils';
-import { logFirebaseAnalyticsEvent } from '../../utils/firebase';
 import ClaimForm from './claim-form';
 import ClaimsList from './claims-list';
 import IpfsImage from '../../components/ipfsImage';
+import axios from 'axios';
 
 interface ClaimsProps {
-  event_id: number;
-  claims: string[];
-  eventData: CollectionData | undefined;
+  eventId: number;
+  eventData: IEventData | undefined;
+  quest: IQuest | undefined;
 }
 
 interface ClaimWidgetState {
@@ -55,7 +54,8 @@ const claimReducer = (state: ClaimWidgetState, action: ClaimWidgetAction) => {
   }
 };
 
-const Claims: React.FC<ClaimsProps> = ({ claims, event_id, eventData }) => {
+const Claims: React.FC<ClaimsProps> = ({ eventId, eventData, quest }) => {
+  const [rewardImg, setRewardImg] = useState<string>('');
   const [{ qrString, imgSrc, claimString }, dispatch] = useReducer(claimReducer, initialState);
 
   const closeModal = () => {
@@ -65,28 +65,43 @@ const Claims: React.FC<ClaimsProps> = ({ claims, event_id, eventData }) => {
     });
   };
 
-  const openImgModal = (index: number) => {
-    // const rewardImg = eventData?.quests[index].reward_uri;
-    // dispatch({
-    //   type: ClaimWidgetActionKind.OPEN_IMG_MODAL,
-    //   payload: String(rewardImg),
-    // });
+  const openImgModal = async () => {
+    dispatch({
+      type: ClaimWidgetActionKind.OPEN_IMG_MODAL,
+      payload: String(rewardImg),
+    });
   };
 
-  const openQRCodeModal = (index: number) => {
-    const newString = 'https://t.me/vself_bot?start=' + event_id + '_' + claims[index];
+  const openQRCodeModal = () => {
+    const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
+    const link = `/claim/${eventId}`;
+
+    // const newString = 'https://t.me/vself_bot?start=' + eventId;
+    const newString = origin + link;
     dispatch({
       type: ClaimWidgetActionKind.OPEN_QR_MODAL,
       payload: newString,
     });
   };
 
-  const openClaimModal = (index: number) => {
+  const openClaimModal = () => {
     dispatch({
       type: ClaimWidgetActionKind.OPEN_CLAIM_MODAL,
-      payload: claims[index],
+      payload: 'claiming',
     });
   };
+
+  useEffect(() => {
+    if (quest) {
+      (async () => {
+        const result = (await axios.get(quest?.rewardUri!)).data;
+        const imgUri = result.image;
+        const rewardImg = `https://nftstorage.link/ipfs/${imgUri.split('//')[1]}`;
+
+        setRewardImg(rewardImg);
+      })();
+    }
+  }, [quest]);
 
   return (
     <section className="flex flex-col w-full py-[40px] mb-4 overflow-y-auto bg-white rounded-[40px]">
@@ -97,18 +112,19 @@ const Claims: React.FC<ClaimsProps> = ({ claims, event_id, eventData }) => {
         <DownloadQR qrString={String(qrString)} />
       </Modal>
       <Modal isOpen={!!claimString} onClose={closeModal}>
-        <ClaimForm event_id={event_id} claimString={String(claimString)} />
+        <ClaimForm eventId={eventId} />
       </Modal>
       <div className="flex flex-col w-full max-w-[1080px] mx-auto">
         <h2 className="font-drukMedium uppercase text-black text-[30px] mb-[25px]">QR Strings</h2>
-        {/* <ClaimsList
-          event_id={event_id}
+        <ClaimsList
+          event_id={eventId}
           eventData={eventData}
-          claims={claims}
+          quest={quest}
+          rewardImg={rewardImg}
           imgCallback={openImgModal}
           qrbtnCallback={openQRCodeModal}
           claimBtnCallback={openClaimModal}
-        /> */}
+        />
       </div>
     </section>
   );
@@ -121,7 +137,6 @@ interface DownloadQRProps {
 const DownloadQR: React.FC<DownloadQRProps> = ({ qrString }) => {
   const download = () => {
     downloadQR(qrString);
-    logFirebaseAnalyticsEvent(AnalyticsEvents.CLAIM_QR_DOWNLOADED, {});
   };
   return (
     <div className="flex flex-col">

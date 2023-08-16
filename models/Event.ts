@@ -58,3 +58,30 @@ export interface IEventData {
   eventDescription: string;
   isAvailable: boolean;
 }
+
+export interface IEventStats {
+  totalActions: BigNumber;
+  totalRewards: BigNumber;
+  totalUsers: BigNumber;
+  createdAt: BigNumber;
+  stoppedAt: BigNumber;
+  participants: string[];
+}
+
+export interface IQuest {
+  rewardTitle: string;
+  rewardDescription: string;
+  rewardUri: string;
+}
+
+export interface IEventAction {
+  timestamp: BigNumber;
+  userAddress: string;
+  actionStatus: boolean;
+}
+
+export interface IEvent {
+  eventData: IEventData;
+  eventStats: IEventStats;
+  quest: IQuest;
+}

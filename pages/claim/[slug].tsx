@@ -2,28 +2,33 @@
 import { useState, useEffect } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
+import { readContract } from '@wagmi/core';
 import ClaimForm from '../../features/claims/claim-form';
-import { getFirestoreDocumentData } from '../../utils/firebase';
-import { getConnectedContract } from '../../utils/contract';
 import PageLayout from '../../components/page-layout';
+import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants/endpoints';
+import eventsContractAbi from '../../abis/events-abi.json';
 
 interface ClaimPageProps {
-  event_id: number;
-  strings: string[];
-  isPrivate: boolean;
+  eventId: number;
 }
-const ClaimPage: NextPage<ClaimPageProps> = ({ strings, isPrivate, event_id }) => {
+const ClaimPage: NextPage<ClaimPageProps> = ({ eventId }) => {
   const [eventError, setEventError] = useState<boolean>(false);
   const { asPath } = useRouter();
 
   // Check that event exists
   useEffect(() => {
     const tryGetEventData = async () => {
-      // Create contract instance
-      const connection = await getConnectedContract();
-      const { contract } = connection;
-      const event_data = await contract.get_event_data({ event_id: Number(event_id) });
-      if (event_data === null) setEventError(true);
+      const eventData = await readContract({
+        address: CAMINO_EVENTS_CONTRACT_ADDRESS,
+        abi: eventsContractAbi,
+        functionName: 'getEventData',
+        args: [
+          eventId
+        ],
+        chainId: CAMINO_CHAIN_ID
+      });
+
+      if (!eventData) setEventError(true);
     };
 
     tryGetEventData();
@@ -42,16 +47,14 @@ const ClaimPage: NextPage<ClaimPageProps> = ({ strings, isPrivate, event_id }) =
         <section className="flex flex-col w-full items-center mt-[120px] px-[20px]">
           <div className="flex flex-col w-full bg-white p-[20px] rounded-lg max-w-[600px] my-[40px]">
             <h2 className="font-drukMedium uppercase text-black text-xl mb-2">Something went wrong</h2>
-            <p className="text-[#3D3D3D]">{`The event ${event_id} is not found `}</p>
+            <p className="text-[#3D3D3D]">{`The event ${eventId} is not found `}</p>
           </div>
         </section>
       ) : (
         <section className="flex flex-col w-full items-center">
-          {strings.map((claimString: string, index: number) => (
-            <div key={index} className="flex flex-col w-full bg-white p-[20px] rounded-lg max-w-[600px] my-[40px]">
-              <ClaimForm isPrivate={isPrivate} event_id={Number(event_id)} claimString={String(claimString)} />
-            </div>
-          ))}
+          <div className="flex flex-col w-full bg-white p-[20px] rounded-lg max-w-[600px] my-[40px]">
+            <ClaimForm eventId={Number(eventId)} />
+          </div>
         </section>
       )}
     </PageLayout>
@@ -59,15 +62,10 @@ const ClaimPage: NextPage<ClaimPageProps> = ({ strings, isPrivate, event_id }) =
 };
 
 ClaimPage.getInitialProps = async ({ query }) => {
-  const event_id = query.slug;
-  const strings = query.strings;
-  const res: any = await getFirestoreDocumentData('claims', String(event_id));
-  const isPrivate = res?.isPrivate || false;
+  const eventId = query.slug;
 
   return {
-    event_id: Number(event_id),
-    isPrivate: isPrivate,
-    strings: String(strings).split(','),
+    eventId: Number(eventId),
   };
 };
 

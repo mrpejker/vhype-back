@@ -1,47 +1,29 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @next/next/no-img-element */
-import { utils } from 'near-api-js';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useAccount, useContractEvent } from 'wagmi';
+import { writeContract } from '@wagmi/core';
 import Loader from '../../components/loader';
 import Modal from '../../components/modal';
-import { AnalyticsEvents } from '../../constants/analytics-events';
-import { useWalletSelector } from '../../contexts/WalletSelectorContext';
-import { CollectionData } from '../../models/Event';
+import { IEventData } from '../../models/Event';
 import { formatTimeStampToLocaleDateString } from '../../utils';
-import { logFirebaseAnalyticsEvent } from '../../utils/firebase';
-import { getConnectedContract } from '../../utils/contract';
+import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants/endpoints';
+import eventsContractAbi from "../../abis/events-abi.json";
 
 interface EventCardProps {
-  eventData: CollectionData | undefined;
+  eventData: IEventData | undefined;
   isOwnEvent?: boolean;
-  event_id?: number;
+  eventId?: number;
   isActive?: boolean;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ eventData, isOwnEvent, event_id, isActive }) => {
+const EventCard: React.FC<EventCardProps> = ({ eventData, isOwnEvent, eventId, isActive }) => {
+  const { address } = useAccount();
   const [isStopOpened, setIsStopOpened] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hideStopEventButton, setHideStopEventButton] = useState<boolean>(false);
-  const [collectionSettings, setCollectionSettings] = useState<any>(null);
-  const { selector, accountId } = useWalletSelector();
-  const BOATLOAD_OF_GAS = utils.format.parseNearAmount('0.00000000003')!;
-
-  // Fetch collecton settings
-  useEffect(() => {
-    const getCollectionSettings = async () => {
-      try {
-        const { contract } = await getConnectedContract();
-        const settings = await contract.get_collection_settings({ event_id });
-        setCollectionSettings(settings);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    getCollectionSettings();
-  }, [JSON.stringify(collectionSettings)]);
 
   const openStopEventModal = () => {
     setIsStopOpened(true);
@@ -56,36 +38,43 @@ const EventCard: React.FC<EventCardProps> = ({ eventData, isOwnEvent, event_id, 
     try {
       setHideStopEventButton(true);
       setIsLoading(true);
-      const wallet = await selector.wallet();
-      await wallet
-        .signAndSendTransaction({
-          signerId: accountId!,
-          actions: [
-            {
-              type: 'FunctionCall',
-              params: {
-                methodName: 'stop_event',
-                args: {
-                  event_id: Number(event_id),
-                },
-                gas: BOATLOAD_OF_GAS,
-                deposit: utils.format.parseNearAmount('0')!,
-              },
-            },
-          ],
-        })
-        .catch((err) => {
-          setHideStopEventButton(false);
-          throw err;
-        });
 
-      setIsSuccess(true);
-      logFirebaseAnalyticsEvent(AnalyticsEvents.EVENT_STOPPED, {});
+      const tx = await writeContract({
+        address: CAMINO_EVENTS_CONTRACT_ADDRESS,
+        abi: eventsContractAbi,
+        functionName: 'stopEvent',
+        args: [
+          Number(eventId)
+        ],
+        chainId: CAMINO_CHAIN_ID
+      });
+
+      console.log('tx', tx);
     } catch (err) {
+      setHideStopEventButton(false);
       setIsError(true);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
+
+
+  const unwatch = useContractEvent({
+    address: CAMINO_EVENTS_CONTRACT_ADDRESS,
+    abi: eventsContractAbi,
+    eventName: 'StopEvent',
+    listener(log) {
+      try {
+        if (log) {
+          if ((log[0] as any).args.userAddress == address) {
+            setIsSuccess(true);
+            setIsLoading(false);
+          }
+        }
+      } catch { }
+
+      if (log.length > 0) unwatch?.()
+    },
+  });
 
   return (
     <>
@@ -122,23 +111,14 @@ const EventCard: React.FC<EventCardProps> = ({ eventData, isOwnEvent, event_id, 
         </div>
         <div className="flex w-full sm:w-2/3 sm:p-6 mb-10 items-center justify-start">
           <div className="flex flex-col">
-            <h5 className="text-black text-[30px] mb-[25px] font-drukMedium">{eventData?.event_name}</h5>
+            <h5 className="text-black text-[30px] mb-[25px] font-drukMedium">{eventData?.eventName}</h5>
 
-            <p className="text-base mb-4 text-[#3D3D3D]">{eventData?.event_description}</p>
-            <p className="text-base mb-1 text-[#3D3D3D]">
-              {collectionSettings?.signin_request ? `Authorization is needed` : `Authorization isn't needed`}
-            </p>
-            <p className="text-base mb-1 text-[#3D3D3D]">
-              {collectionSettings?.transferability ? `Token is transferable` : `Token isn't transferable`}
+            <p className="text-base mb-4 text-[#3D3D3D]">{eventData?.eventDescription}</p>
+            <p className="text-base mb-4 text-[#3D3D3D]">
+              Start Time: {eventData?.startTime && formatTimeStampToLocaleDateString(Number(eventData.startTime))}
             </p>
             <p className="text-base mb-4 text-[#3D3D3D]">
-              {collectionSettings?.limited_collection ? `Minting is limited` : `Minting isn't limited`}
-            </p>
-            <p className="text-base mb-4 text-[#3D3D3D]">
-              Start Time: {eventData?.start_time && formatTimeStampToLocaleDateString(eventData.start_time)}
-            </p>
-            <p className="text-base mb-4 text-[#3D3D3D]">
-              Finish Time: {eventData?.finish_time && formatTimeStampToLocaleDateString(eventData.finish_time)}
+              Finish Time: {eventData?.finishTime && formatTimeStampToLocaleDateString(Number(eventData.finishTime))}
             </p>
             {isOwnEvent && isActive && !isSuccess && (
               <button

@@ -3,34 +3,35 @@
 import type { GetServerSidePropsContext, NextPage } from 'next';
 import { readContract } from '@wagmi/core';
 import PageLayout from '../../components/page-layout';
-import { getConnectedContract } from '../../utils/contract';
 import EventDetails from '../../features/events-details';
 import eventsContractAbi from '../../abis/events-abi.json';
 import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants/endpoints';
+import { IEvent, IEventData, IEventStats, IQuest } from '../../models/Event';
 
 interface EventDetailedPageProps {
-  event_id: number;
-  event_actions: any;
-  event_stats: any;
-  event_data: any;
-  isActive: boolean;
+  eventId: number;
+  eventActions: any;
+  eventData: IEventData;
+  eventStats: IEventStats;
+  quest: IQuest;
 }
 
 const EventDetailedPage: NextPage<EventDetailedPageProps> = ({
-  event_id,
-  event_actions,
-  event_stats,
-  event_data,
-  isActive,
+  eventId,
+  eventData,
+  eventStats,
+  eventActions,
+  quest
 }) => {
   return (
-    <PageLayout title={event_data?.event_name} description={event_data?.event_description} pageName="Dashboard">
+    <PageLayout title={eventData?.eventName} description={eventData?.eventDescription} pageName="Dashboard">
       <EventDetails
-        event_id={event_id}
-        event_actions={event_actions}
-        event_stats={event_stats}
-        event_data={event_data}
-        isActive={isActive}
+        eventId={eventId}
+        eventActions={eventActions}
+        eventStats={eventStats}
+        eventData={eventData}
+        quest={quest}
+        isActive={true}
       />
     </PageLayout>
   );
@@ -40,33 +41,36 @@ export const getServerSideProps = async ({ query, res }: GetServerSidePropsConte
   res.setHeader('Cache-Control', 'public, s-maxage=0, stale-while-revalidate=10');
   const event_id = query.slug;
 
-  // const ongoingEventDatas = await readContract({
-  //   address: CAMINO_EVENTS_CONTRACT_ADDRESS,
-  //   abi: eventsContractAbi,
-  //   functionName: 'getOngoingEventDatas',
-  //   args: [
-  //     0, // fromIndex
-  //     100, // limit,
-  //     true, // isAll
-  //   ],
-  //   chainId: CAMINO_CHAIN_ID
-  // });
-
-  const { contract } = await getConnectedContract();
-  const [actions, stats, data, activeEvents]: any = await Promise.all([
-    contract.get_event_actions({ event_id: Number(event_id), from_index: 0, limit: 100 }),
-    contract.get_event_stats({ event_id: Number(event_id) }),
-    contract.get_event_data({ event_id: Number(event_id) }),
-    contract.get_ongoing_events({ from_index: 0, limit: 150 }),
+  const [eventInfo, eventActions] = await Promise.all([
+    readContract({
+      address: CAMINO_EVENTS_CONTRACT_ADDRESS,
+      abi: eventsContractAbi,
+      functionName: 'getEvent',
+      args: [
+        Number(event_id)
+      ],
+      chainId: CAMINO_CHAIN_ID
+    }),
+    readContract({
+      address: CAMINO_EVENTS_CONTRACT_ADDRESS,
+      abi: eventsContractAbi,
+      functionName: 'getEventActions',
+      args: [
+        Number(event_id),
+        0,
+        100,
+      ],
+      chainId: CAMINO_CHAIN_ID
+    })
   ]);
-  const isActive = activeEvents.find((element: any) => String(event_id) === String(element[0])) !== undefined;
+
   return {
     props: {
-      event_id: Number(event_id),
-      event_actions: actions,
-      event_stats: stats,
-      event_data: data,
-      isActive,
+      eventId: Number(event_id),
+      eventData: (eventInfo as any)?.eventData,
+      eventStats: (eventInfo as any)?.eventStats,
+      eventActions: eventActions,
+      quest: (eventInfo as any)?.quest,
     },
   };
 };

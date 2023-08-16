@@ -8,8 +8,6 @@ import ErrorCreateMessage from './error-create';
 import EventForm from './event-form';
 import { resizeFile, uploadMetadataToIPFS } from '../../utils';
 import { CollectionFormData, Quest } from '../../models/Event';
-import { logFirebaseAnalyticsEvent } from '../../utils/firebase';
-import { AnalyticsEvents } from '../../constants/analytics-events';
 import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants/endpoints';
 import eventsContractAbi from "../../abis/events-abi.json";
 

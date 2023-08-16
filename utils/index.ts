@@ -151,7 +151,7 @@ export const downloadQR = (qrString: string): void => {
     const pngFile = canvas.toDataURL('image/png');
 
     const downloadLink = document.createElement('a');
-    downloadLink.download = String(qrString);
+    downloadLink.download = String(qrString) + '.png';
     downloadLink.href = `${pngFile}`;
     downloadLink.click();
   };

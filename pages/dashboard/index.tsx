@@ -40,7 +40,7 @@ const EventsDashboardPage: NextPage<EventsDashboardProps> = ({ ongoingEventDatas
           / Products / <b className="text-[#fff]">Dashboard</b>
         </span>
       </div>
-      <EventsDashboard ongoingEventDatas={ongoingEventDatas} />
+      <EventsDashboard ongoingEventDatas={ongoingEventDatas.reverse()} />
     </main>
   );
 };

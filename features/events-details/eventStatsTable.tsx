@@ -1,9 +1,9 @@
 import React from 'react';
-import { CollectionStats } from '../../models/Event';
+import { IEventStats } from '../../models/Event';
 import { formatTimeStampToLocaleDateString } from '../../utils';
 
 interface EventStatsTableProps {
-  eventStats: CollectionStats | undefined;
+  eventStats: IEventStats | undefined;
 }
 
 const EventStatsTable: React.FC<EventStatsTableProps> = ({ eventStats }) => {
@@ -22,15 +22,20 @@ const EventStatsTable: React.FC<EventStatsTableProps> = ({ eventStats }) => {
         <tbody className="text-[#3D3D3D]">
           <tr>
             <td className="text-sm px-4 py-2 whitespace-nowrap text-center hidden sm:table-cell">
-              {eventStats.created_at && formatTimeStampToLocaleDateString(eventStats.created_at)}
+              {eventStats.createdAt && formatTimeStampToLocaleDateString(Number(eventStats.createdAt))}
             </td>
             <td className="text-sm px-4 py-2 whitespace-nowrap text-center hidden sm:table-cell">
-              {eventStats.stopped_at && formatTimeStampToLocaleDateString(eventStats.stopped_at)}
+              {
+                eventStats.createdAt &&
+                eventStats.stoppedAt &&
+                eventStats.createdAt < eventStats.stoppedAt &&
+                formatTimeStampToLocaleDateString(Number(eventStats.stoppedAt))
+              }
             </td>
 
-            <td className="text-center text-sm px-4 py-2 whitespace-nowrap">{eventStats.total_actions}</td>
-            <td className="text-center text-sm px-4 py-2 whitespace-nowrap">{eventStats.total_rewards}</td>
-            <td className="text-center text-sm px-4 py-2 whitespace-nowrap">{eventStats.total_users}</td>
+            <td className="text-center text-sm px-4 py-2 whitespace-nowrap">{Number(eventStats.totalActions)}</td>
+            <td className="text-center text-sm px-4 py-2 whitespace-nowrap">{Number(eventStats.totalRewards)}</td>
+            <td className="text-center text-sm px-4 py-2 whitespace-nowrap">{Number(eventStats.totalUsers)}</td>
           </tr>
           <tr>
             <td className="px-4 py-2 whitespace-nowrap text-sm ">
