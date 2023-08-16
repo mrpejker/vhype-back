@@ -38,6 +38,6 @@ export const APIURL = isEnvProd ? APIURL_MAINNET : APIURL_TESTNET;
 export const WEBSITE_URL = isEnvProd ? Endpoints.PROD_URL : Endpoints.TESTNET_URL;
 
 // Events contract address
-export const CAMINO_EVENTS_CONTRACT_ADDRESS = '0x38BCad3D203A79230B828207BcBF73450a0a5D33';
+export const CAMINO_EVENTS_CONTRACT_ADDRESS = '0xCde5ca336C5BFE03215dDAC78B7F117bAC53f10F';
 export const CAMINO_CHAIN_ID = 501;
 export const REACT_APP_ENABLE_TESTNETS = true;

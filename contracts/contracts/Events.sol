@@ -251,13 +251,18 @@ contract VSelfEvents is ERC721URIStorage, Ownable {
         if (_isAll) {
             return eventDatas;
         } else {
+            uint256 count = _limit;
+
+            if ((_fromIndex + _limit) > eventCount) {
+                count = eventCount - _fromIndex;
+            }
+
             EventData[] memory validEventDatas = new EventData[](_limit);
 
-            for (uint i = 0; i < _limit; i++) {
+            for (uint i = 0; i < count; i++) {
                 if (
                     eventDatas[_fromIndex + i].isAvailable &&
-                    eventDatas[_fromIndex + i].finishTime > block.timestamp &&
-                    (_fromIndex + i) < eventCount
+                    eventDatas[_fromIndex + i].finishTime > block.timestamp
                 ) {
                     validEventDatas[i] = eventDatas[_fromIndex + i];
                 }
@@ -277,13 +282,18 @@ contract VSelfEvents is ERC721URIStorage, Ownable {
         uint256 _fromIndex,
         uint256 _limit
     ) external view returns (Event[] memory) {
-        Event[] memory validEvents = new Event[](_limit);
+        uint256 count = _limit;
 
-        for (uint i = 0; i < _limit; i++) {
+        if ((_fromIndex + _limit) > eventCount) {
+            count = eventCount - _fromIndex;
+        }
+
+        Event[] memory validEvents = new Event[](count);
+
+        for (uint i = 0; i < count; i++) {
             if (
                 eventDatas[_fromIndex + i].isAvailable &&
-                eventDatas[_fromIndex + i].finishTime > block.timestamp &&
-                (_fromIndex + i) < eventCount
+                eventDatas[_fromIndex + i].finishTime > block.timestamp
             ) {
                 validEvents[i] = Event({
                     eventData: eventDatas[_fromIndex + i],
@@ -296,6 +306,22 @@ contract VSelfEvents is ERC721URIStorage, Ownable {
         }
 
         return validEvents;
+    }
+
+    /**
+     * @notice Get a specific event according to an event id
+     * @param _eventId: the first index of events to be retrieved
+     * @dev Callable by users
+     */
+    function getEvent(uint256 _eventId) external view returns (Event memory) {
+        uint256 eventIndex = _eventIdToEventIndex[_eventId];
+
+        return
+            Event({
+                eventData: eventDatas[eventIndex],
+                eventStats: _eventIdToEventStats[_eventId],
+                quest: _eventIdToQuest[_eventId]
+            });
     }
 
     /**
@@ -324,14 +350,17 @@ contract VSelfEvents is ERC721URIStorage, Ownable {
         uint256 _fromIndex,
         uint256 _limit
     ) external view returns (EventAction[] memory) {
-        EventAction[] memory eventActions = new EventAction[](_limit);
+        uint256 eventActionsLength = _eventIdToEventActions[_eventId].length;
+        uint count = _limit;
 
-        for (uint i = 0; i < _limit; i++) {
-            if ((_fromIndex + i) < _eventIdToEventActions[_eventId].length) {
-                eventActions[i] = _eventIdToEventActions[_eventId][
-                    _fromIndex + 1
-                ];
-            }
+        if ((_fromIndex + _limit) > eventActionsLength) {
+            count = eventActionsLength - _fromIndex;
+        }
+
+        EventAction[] memory eventActions = new EventAction[](count);
+
+        for (uint i = 0; i < count; i++) {
+            eventActions[i] = _eventIdToEventActions[_eventId][_fromIndex + 1];
         }
 
         return eventActions;
