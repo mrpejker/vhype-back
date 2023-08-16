@@ -3,14 +3,13 @@
 pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 /**
  * @title VSELF SBT collection smart contract
  * @notice This contract is intended to create & claim SBT collections.
  */
-contract VSelfEvents is ERC721URIStorage, Ownable {
+contract VSelfEvents is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
@@ -22,7 +21,6 @@ contract VSelfEvents is ERC721URIStorage, Ownable {
      * @notice Struct for NFT reward
      */
     struct Quest {
-        string qrPrefixEnc;
         string rewardTitle;
         string rewardDescription;
         string rewardUri;
@@ -80,6 +78,7 @@ contract VSelfEvents is ERC721URIStorage, Ownable {
     mapping(uint256 => Quest) public _eventIdToQuest;
     mapping(uint256 => EventAction[]) public _eventIdToEventActions;
     mapping(uint256 => EventStats) public _eventIdToEventStats;
+    mapping(uint256 => bool) public _isEventIdExist;
     mapping(uint256 => mapping(address => bool)) public _hasUserClaimedRewards;
 
     EventData[] public eventDatas;
@@ -150,6 +149,10 @@ contract VSelfEvents is ERC721URIStorage, Ownable {
 
         uint256 eventId = block.timestamp + block.number;
 
+        require(!_isEventIdExist[eventId], "Already existed");
+
+        _isEventIdExist[eventId] = true;
+
         newEventData.eventId = eventId;
         newEventData.startTime = _startTime;
         newEventData.finishTime = _finishTime;
@@ -187,10 +190,17 @@ contract VSelfEvents is ERC721URIStorage, Ownable {
             "Already claimed"
         );
 
+        require(_isEventIdExist[_eventId], "Not exist event id");
+
         uint256 eventIndex = _eventIdToEventIndex[_eventId];
         EventData storage eventData = eventDatas[eventIndex];
 
         require(eventData.isAvailable, "Not time to claim. Already stopped.");
+
+        require(
+            eventData.startTime <= block.timestamp,
+            "Not time to claim. Not started yet."
+        );
 
         require(
             eventData.finishTime > block.timestamp,
@@ -213,6 +223,8 @@ contract VSelfEvents is ERC721URIStorage, Ownable {
         );
 
         _mintNFT(_recipient, _eventIdToQuest[_eventId].rewardUri);
+
+        emit Checkin(msg.sender, _eventId);
     }
 
     /**
@@ -221,6 +233,8 @@ contract VSelfEvents is ERC721URIStorage, Ownable {
      * @dev Callable by an event owner
      */
     function stopEvent(uint256 _eventId) external {
+        require(_isEventIdExist[_eventId], "Not exist event id");
+
         uint256 eventIndex = _eventIdToEventIndex[_eventId];
 
         EventData storage eventData = eventDatas[eventIndex];
@@ -240,36 +254,30 @@ contract VSelfEvents is ERC721URIStorage, Ownable {
      * @notice Retrieve all ongoing event data
      * @param _fromIndex: the first index of event data to be retrieved
      * @param _limit: number of event data to be retrieved
-     * @param _isAll: check whether retrieve all event data or not
      * @dev Callable by users
      */
     function getOngoingEventDatas(
         uint256 _fromIndex,
-        uint256 _limit,
-        bool _isAll
+        uint256 _limit
     ) external view returns (EventData[] memory) {
-        if (_isAll) {
-            return eventDatas;
-        } else {
-            uint256 count = _limit;
+        uint256 count = _limit;
 
-            if ((_fromIndex + _limit) > eventCount) {
-                count = eventCount - _fromIndex;
-            }
-
-            EventData[] memory validEventDatas = new EventData[](_limit);
-
-            for (uint i = 0; i < count; i++) {
-                if (
-                    eventDatas[_fromIndex + i].isAvailable &&
-                    eventDatas[_fromIndex + i].finishTime > block.timestamp
-                ) {
-                    validEventDatas[i] = eventDatas[_fromIndex + i];
-                }
-            }
-
-            return validEventDatas;
+        if ((_fromIndex + _limit) > eventCount) {
+            count = eventCount - _fromIndex;
         }
+
+        EventData[] memory validEventDatas = new EventData[](count);
+
+        for (uint i = 0; i < count; i++) {
+            if (
+                eventDatas[_fromIndex + i].isAvailable &&
+                eventDatas[_fromIndex + i].finishTime > block.timestamp
+            ) {
+                validEventDatas[i] = eventDatas[_fromIndex + i];
+            }
+        }
+
+        return validEventDatas;
     }
 
     /**
@@ -360,9 +368,17 @@ contract VSelfEvents is ERC721URIStorage, Ownable {
         EventAction[] memory eventActions = new EventAction[](count);
 
         for (uint i = 0; i < count; i++) {
-            eventActions[i] = _eventIdToEventActions[_eventId][_fromIndex + 1];
+            eventActions[i] = _eventIdToEventActions[_eventId][_fromIndex + i];
         }
 
         return eventActions;
+    }
+
+    /**
+     * @notice Get current block timestamp
+     * @dev Callable by users
+     */
+    function getCurrentTimestamp() external view returns (uint256) {
+        return block.timestamp;
     }
 }

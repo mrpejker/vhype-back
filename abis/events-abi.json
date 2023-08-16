@@ -109,25 +109,6 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": true,
-                "internalType": "address",
-                "name": "previousOwner",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-            }
-        ],
-        "name": "OwnershipTransferred",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
                 "indexed": false,
                 "internalType": "address",
                 "name": "userAddress",
@@ -291,11 +272,6 @@
         "outputs": [
             {
                 "internalType": "string",
-                "name": "qrPrefixEnc",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
                 "name": "rewardTitle",
                 "type": "string"
             },
@@ -327,6 +303,25 @@
             }
         ],
         "name": "_hasUserClaimedRewards",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "_isEventIdExist",
         "outputs": [
             {
                 "internalType": "bool",
@@ -505,6 +500,19 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "getCurrentTimestamp",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "uint256",
@@ -602,11 +610,6 @@
                     },
                     {
                         "components": [
-                            {
-                                "internalType": "string",
-                                "name": "qrPrefixEnc",
-                                "type": "string"
-                            },
                             {
                                 "internalType": "string",
                                 "name": "rewardTitle",
@@ -754,11 +757,6 @@
                 "internalType": "uint256",
                 "name": "_limit",
                 "type": "uint256"
-            },
-            {
-                "internalType": "bool",
-                "name": "_isAll",
-                "type": "bool"
             }
         ],
         "name": "getOngoingEventDatas",
@@ -919,11 +917,6 @@
                         "components": [
                             {
                                 "internalType": "string",
-                                "name": "qrPrefixEnc",
-                                "type": "string"
-                            },
-                            {
-                                "internalType": "string",
                                 "name": "rewardTitle",
                                 "type": "string"
                             },
@@ -989,19 +982,6 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
         "inputs": [
             {
                 "internalType": "uint256",
@@ -1018,13 +998,6 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "renounceOwnership",
-        "outputs": [],
-        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -1120,11 +1093,6 @@
             },
             {
                 "components": [
-                    {
-                        "internalType": "string",
-                        "name": "qrPrefixEnc",
-                        "type": "string"
-                    },
                     {
                         "internalType": "string",
                         "name": "rewardTitle",
@@ -1234,19 +1202,6 @@
             }
         ],
         "name": "transferFrom",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-            }
-        ],
-        "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

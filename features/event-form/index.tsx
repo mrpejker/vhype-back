@@ -110,7 +110,7 @@ const CreateNewEvent: React.FC = () => {
           event_description as any,
           Math.floor(start_time / 10 ** 9),
           Math.floor(finish_time / 10 ** 9),
-          ['qr_code', ...Object.values(quest)],
+          [...Object.values(quest)],
         ],
         chainId: CAMINO_CHAIN_ID
       });

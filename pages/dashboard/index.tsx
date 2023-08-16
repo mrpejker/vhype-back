@@ -55,7 +55,6 @@ export const getServerSideProps = async ({ res }: GetServerSidePropsContext) => 
       args: [
         0, // fromIndex
         100, // limit,
-        true, // isAll
       ],
       chainId: CAMINO_CHAIN_ID
     });
