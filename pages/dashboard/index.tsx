@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { readContract } from '@wagmi/core';
 import EventsDashboard from '../../features/dashboard';
-import { getConnectedContract } from '../../utils/contract';
+import { IEventData } from '../../models/Event';
 import { CAMINO_CHAIN_ID, CAMINO_EVENTS_CONTRACT_ADDRESS } from '../../constants/endpoints';
 import eventsContractAbi from '../../abis/events-abi.json';
 
@@ -58,9 +58,10 @@ export const getServerSideProps = async ({ res }: GetServerSidePropsContext) => 
       ],
       chainId: CAMINO_CHAIN_ID
     });
+
     return {
       props: {
-        ongoingEventDatas
+        ongoingEventDatas: (ongoingEventDatas as IEventData[]).filter(x => Number(x.eventId) > 0)
       },
     };
   } catch (e) {
