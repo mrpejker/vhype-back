@@ -82,7 +82,7 @@ const UploadImageButton: React.FC<UploadImageButtonProps> = ({ onImageSet, file,
       {!readonly && imgSrc && (
         <button
           type="button"
-          className="absolute bottom-[5px] right-[-40px] md:right-[-40px] flex justify-center items-center w-[40px] h-[40px] rounded-full hover:bg-[#f0f0f0] focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+          className="absolute bottom-[5px] right-0 md:right-0 flex justify-center items-center w-[40px] h-[40px] rounded-full hover:bg-[#f0f0f0] focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
           onClick={removeImage}
         >
           <TrashIcon className="relative h-[20px] w-[20px] stroke-[#3D3D3D]" />

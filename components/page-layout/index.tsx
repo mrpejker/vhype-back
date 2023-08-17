@@ -64,7 +64,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({
             <Link href={`/${pageName?.toLowerCase()}`} className="underline">
               {pageName}
             </Link>{' '}
-            /
+            {pageName ? '/' : ''}
             <b
               className={
                 'font-inter text-[16px] leading-[26px] font-normal ' + colored ? 'text-[#343434]' : 'text-[#fff]'

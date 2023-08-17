@@ -28,24 +28,12 @@ export const navMenuItems: MenuItem[] = [
 export const subMenuItems: any = {
   Products: [
     {
-      url: WebappURLS.ONBOARD_URL,
-      title: 'ONBOARDING TO NEAR',
-    },
-    {
       url: WebappURLS.ADD_URL,
       title: 'CREATE COLLECTION',
     },
     {
       url: WebappURLS.PRODUCTS_URL,
       title: 'COLLECTION DASHBOARD',
-    },
-    {
-      url: WebappURLS.PROFILE_URL,
-      title: 'VRANDA',
-    },
-    {
-      url: WebappURLS.VSTUDIO_URL,
-      title: 'VSTUDIO',
     },
   ],
   Resources: [

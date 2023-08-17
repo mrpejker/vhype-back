@@ -47,9 +47,9 @@ const NewEventPage: NextPage = () => {
   }
   return (
     <PageLayout
-      title="Create Your NFT Collection vSelf"
+      title="Create Your NFT Collection"
       category="Products"
-      description="Create Your NFT Collection vSelf"
+      description="Create Your NFT Collection"
     >
       <CreateNewEvent />
     </PageLayout>

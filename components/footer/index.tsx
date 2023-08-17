@@ -71,11 +71,6 @@ const Footer: React.FC = () => {
               <h2 className={isAbout ? 'text-[#343434]' : 'text-[#41F092]'}>
                 <b>Products</b>
               </h2>
-              <ActiveLink href="/onboard" className="mt-2">
-                <p className={isAbout ? 'hover:font-semibold text-black' : 'hover:text-[#41F092] text-white'}>
-                  Onboarding to NEAR
-                </p>
-              </ActiveLink>
               <ActiveLink href="/dashboard" className="mt-2">
                 <p className={isAbout ? 'hover:font-semibold text-black' : 'hover:text-[#41F092] text-white'}>
                   Collections dashboard
@@ -85,14 +80,6 @@ const Footer: React.FC = () => {
               <ActiveLink href="/add" className="mt-2">
                 <p className={isAbout ? 'hover:font-semibold text-black' : 'hover:text-[#41F092] text-white'}>
                   Create Collection
-                </p>
-              </ActiveLink>
-              <ActiveLink href="/vranda" className="mt-2">
-                <p className={isAbout ? 'hover:font-semibold text-black' : 'hover:text-[#41F092] text-white'}>vRanda</p>
-              </ActiveLink>
-              <ActiveLink href="/vstudio" className="mt-2">
-                <p className={isAbout ? 'hover:font-semibold text-black' : 'hover:text-[#41F092] text-white'}>
-                  vStudio
                 </p>
               </ActiveLink>
             </div>
