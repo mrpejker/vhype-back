@@ -13,8 +13,7 @@ Current repository contains frontend source code for all the vSelf web applicati
 
 ## Deployment
 
-- [Staging version](https://testnet.vself.app)
-- [Production version](https://vself.app)
+- [Staging version]([https://testnet.vself.app](https://brands.vself.app/))
 
 ## Functionality 
 
