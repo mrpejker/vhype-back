@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo_brands.png" alt="Vself Ninja"/>
+  <img src="brands.png" alt="Vself Ninja"/>
 </p>
 
 
