@@ -10,12 +10,11 @@
 
 ## Overview 
 
-Current repository contains frontend source code for all the vSelf web application functionality ( NEAR onboarding, SBT collection, Web3 on-chain profile, zero-knowledge onboarding), and also API endpoints source code for SBT collection. 
+Current repository contains source code of vSelf web application compatible with Camino Blockchain. The available fuctionality is to create SBT giveaway and distribute SBT reward using claim link or QR code.   
 
 ## Deployment
 
-- [Staging version](https://brands.vself.app/)
-- [NEAR onboarding](https://brands.vself.app/) allows users to choose name & claim a NEAR account. [Wallet Selector](https://docs.near.org/tools/wallet-selector) & [near-api-js](https://docs.near.org/tools/near-api-js/quick-reference) are used to interact with NEAR Blockchain.
+[Staging version](https://brands.vself.app/) of web application is available here. 
 
 ## Functionality 
 
