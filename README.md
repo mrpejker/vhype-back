@@ -3,7 +3,7 @@
 </p>
 
 
-# vSelf Frontend & API
+# vSelf for brands
 
 ![Tests](https://github.com/vself-project/vself-beta/actions/workflows/pre-deploy-test.yml/badge.svg)
 ![Deployment](https://github.com/vself-project/vself-beta/actions/workflows/firebase-hosting-deploy.yml/badge.svg)
