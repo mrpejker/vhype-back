@@ -2,9 +2,6 @@
   <img src="logo_brands.png" alt="Vself Ninja"/>
 </p>
 
-<p align="center">
-  <img src="https://vself.app/ninja2.png" alt="Vself Ninja"/>
-</p>
 
 # vSelf Frontend & API
 
