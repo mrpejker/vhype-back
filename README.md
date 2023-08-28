@@ -14,7 +14,7 @@ Current repository contains frontend source code for all the vSelf web applicati
 ## Deployment
 
 - [Staging version](https://brands.vself.app/)
-- [NEAR onboarding]([https://vself.app/onboard](https://brands.vself.app/)) allows users to choose name & claim a NEAR account. [Wallet Selector](https://docs.near.org/tools/wallet-selector) & [near-api-js](https://docs.near.org/tools/near-api-js/quick-reference) are used to interact with NEAR Blockchain.
+- [NEAR onboarding](https://brands.vself.app/) allows users to choose name & claim a NEAR account. [Wallet Selector](https://docs.near.org/tools/wallet-selector) & [near-api-js](https://docs.near.org/tools/near-api-js/quick-reference) are used to interact with NEAR Blockchain.
 
 ## Functionality 
 
