@@ -10,7 +10,11 @@
 
 ## Overview 
 
-Current repository contains source code of vSelf web application compatible with Camino Blockchain. The available fuctionality is to create SBT giveaway and distribute SBT reward using claim link or QR code.   
+Current repository contains source code of vSelf web application compatible with Camino Blockchain. 
+
+The available fuctionality is to create SBT giveaway and distribute SBT reward using claim link or QR code.   
+
+This application supports MetaMask authorization and lifes in Columbus testnet.
 
 ## Deployment
 
