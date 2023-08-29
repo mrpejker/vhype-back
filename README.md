@@ -11,7 +11,7 @@ Current repository contains source code of vSelf web application compatible with
 
 The available fuctionality is to set up custom SBT giveaway, distribute SBT reward using claim link or QR code, check claim analytics.   
 
-This application supports MetaMask authorization and lives in Columbus testnet.
+This application supports MetaMask authorization and Columbus testnet.
 
 ## Deployment
 
