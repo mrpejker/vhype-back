@@ -5,22 +5,19 @@
 
 # vSelf for brands
 
-![Tests](https://github.com/vself-project/vself-beta/actions/workflows/pre-deploy-test.yml/badge.svg)
-![Deployment](https://github.com/vself-project/vself-beta/actions/workflows/firebase-hosting-deploy.yml/badge.svg)
-
 ## Overview 
 
 Current repository contains source code of vSelf web application compatible with Camino Blockchain. 
 
-The available fuctionality is to create SBT giveaway and distribute SBT reward using claim link or QR code.   
+The available fuctionality is to set up custom SBT giveaway, distribute SBT reward using claim link or QR code, check claim analytics.   
 
-This application supports MetaMask authorization and lifes in Columbus testnet.
+This application supports MetaMask authorization and lives in Columbus testnet.
 
 ## Deployment
 
 [Staging version](https://brands.vself.app/) of web application is available here. 
 
-## Functionality 
+## User flow 
 
 - [NEAR onboarding](https://vself.app/onboard) allows users to choose name & claim a NEAR account. [Wallet Selector](https://docs.near.org/tools/wallet-selector) & [near-api-js](https://docs.near.org/tools/near-api-js/quick-reference) are used to interact with NEAR Blockchain.
 - [SBT collection toolkit](https://vself.app/add) is no-code user friendly solution to set up, mint, and distribute (using claim link or QR-code) non-transferable NEAR NFTs from custom collection & check [claiming analytics](https://vself.app/dashboard).
