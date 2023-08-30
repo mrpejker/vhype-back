@@ -27,15 +27,10 @@ Here is the description of vSelf [SBT collection toolkit](https://vself-project.
 ## Run
 
 ```bash
-#Run in dev environment
+#Run in staging environment
 yarn dev
 #Or
 npm run dev
-
-#Run in prod environment
-yarn dev:prod
-#Or
-npm run dev:prod
 ```
 
 ## Folder structure
