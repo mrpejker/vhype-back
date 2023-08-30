@@ -22,63 +22,7 @@ This application supports MetaMask authorization and Columbus testnet.
 
 ## Documentation
 
-- [NEAR onboarding](https://vself-project.gitbook.io/vself-project-documentation/)
-- [SBT collection toolkit](https://vself-project.gitbook.io/vself-project-documentation/sbt-collection-toolkit)
-- [vRanda profile](https://vself-project.gitbook.io/vself-project-documentation/user-profile-toolkit/near-nft-based-profile)
-- [zkp vStudio](https://vself-project.gitbook.io/vself-project-documentation/community-management-toolkit/private-community)
-- [Instructions](https://vself-project.gitbook.io/vself-project-documentation/v/instructions/)
-
-## API
-
-### Resources
-
-vSelf API is used for [SBT collection toolkit](https://vself-project.gitbook.io/vself-project-documentation/sbt-collection-toolkit).
-
-Endpoints to track available events & mint SBTs from existing collection are already available. Endpoints to create & manage the collection are in the development. But this part of the functionality is already available in [vSelf web app](https://vself.app/add).
-
-Description of the final product functionality is in our [Gitbook page](https://vself-project.gitbook.io/vself-project-documentation/sbt-collection-toolkit/vself-api-for-collections).
-
-For current development stage we have no API key and request limitation. It is the part of the future development.
-
-[/pages/api/]() folder contains source code.
-
-### Endpoints ready to use
-
-- Mints SBT reward `qr` from event with `eventid` for given `nearid`
-
-```
-https://vself-prod.web.app/api/checkin?eventid='0000000000'&nearid='alice.near'&qr='test_string'
-```
-
-Returns the reward metadata if reward is claimed successfully, `index=-1`else. Example of the return in JSON:
-
-```
-{"index":0,"got":false,"title":"Test SBT 0","description":"test SBT description","eventName":"test_event","hashtags":[" "]}
-```
-
-- View event with `eventid`
-
-```
-http://vself-prod.web.app/api/event?eventid='0000000000'
-```
-
-Returns event metadata in JSON if event exists, `null` else. Example of the return:
-
-```
-{"eventid":0000000000,"isActive":true,"eventName":"test_event","eventDescription":"test_descr","rewardLinks":["https://testcid0.ipfs.nftstorage.link/",""https://testcid1.ipfs.nftstorage.link/"]}
-```
-
-- View upcomming events from white list
-
-```
-http://vself-prod.web.app/api/events
-```
-
-Returns the list of `eventid` with their metadata in JSON:
-
-```
-{"myList":[{"eventid":0000000000,"eventStatus":0,"eventName":"test_event0","eventDescription":"","rewardLinks":["https://testcid0.ipfs.nftstorage.link/"]},{"eventid":0000000001,"eventStatus":0,"eventName":"test_event1","eventDescription":"","rewardLinks":["https://testcid1.ipfs.nftstorage.link/"]}]}
-```
+Here is the description of vSelf [SBT collection toolkit](https://vself-project.gitbook.io/vself-project-documentation/sbt-collection-toolkit).
 
 ## Run
 
