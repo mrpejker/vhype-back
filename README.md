@@ -7,11 +7,11 @@
 
 ## Overview 
 
-Current repository contains source code of vSelf web application compatible with Camino Blockchain. 
+Current repository contains source code of vSelf web application compatible with [Camino Blockchain](https://camino.network/). 
 
 The available fuctionality is to set up custom SBT giveaway, distribute SBT reward using claim link or QR code, check claim analytics.   
 
-This application supports MetaMask authorization and Columbus testnet.
+This application supports [MetaMask](https://metamask.io/) authorization and [Columbus](https://docs.camino.network/about/columbus-testnet) testnet.
 
 ## Deployment
 
@@ -24,14 +24,11 @@ This application supports MetaMask authorization and Columbus testnet.
 
 Here is the description of vSelf [SBT collection toolkit](https://vself-project.gitbook.io/vself-project-documentation/sbt-collection-toolkit).
 
-## Run
+## SBT smart contract
 
-```bash
-#Run in staging environment
-yarn dev
-#Or
-npm run dev
-```
+### Synopsis
+
+
 
 ## Folder structure
 
