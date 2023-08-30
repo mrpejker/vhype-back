@@ -22,7 +22,7 @@ This application supports [MetaMask](https://metamask.io/) authorization and [Co
 
 ## Documentation
 
-Here is the description of vSelf [SBT collection toolkit](https://vself-project.gitbook.io/vself-project-documentation/sbt-collection-toolkit).
+Here is the description of vSelf [SBT collection toolkit](https://vself-project.gitbook.io/vself-project-documentation/sbt-collection-toolkit) functionality.
 
 ## SBT smart contract
 
