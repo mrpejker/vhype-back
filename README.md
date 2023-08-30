@@ -18,9 +18,7 @@ This application supports MetaMask authorization and Columbus testnet.
 [Staging version](https://brands.vself.app/) of web application is available here. 
 
 ## User flow 
-<p align="center">
-  <img src="309.png" alt="Vself Ninja"/>
-</p>
+![](https://github.com/vself-project/docs/blob/main/UserFlowEvents.png)
 
 ## Documentation
 
