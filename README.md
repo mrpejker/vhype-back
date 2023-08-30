@@ -18,11 +18,9 @@ This application supports MetaMask authorization and Columbus testnet.
 [Staging version](https://brands.vself.app/) of web application is available here. 
 
 ## User flow 
-
-- [NEAR onboarding](https://vself.app/onboard) allows users to choose name & claim a NEAR account. [Wallet Selector](https://docs.near.org/tools/wallet-selector) & [near-api-js](https://docs.near.org/tools/near-api-js/quick-reference) are used to interact with NEAR Blockchain.
-- [SBT collection toolkit](https://vself.app/add) is no-code user friendly solution to set up, mint, and distribute (using claim link or QR-code) non-transferable NEAR NFTs from custom collection & check [claiming analytics](https://vself.app/dashboard).
-- [vRanda profile](https://vself.app/vranda) allows users to create profile & add NEAR NFTs there. All the user data is stored on-chain in [Social DB](https://github.com/NearSocial/social-db).
-- [zkp vStudio](https://vself.app/vstudio) is prototype of the zero-knowledge proofs community management toolkit. It provides community creation & private onboarding. Community member is able to get her proof-of-membership, and any user - to stay a verifier of this proof.
+<p align="center">
+  <img src="309.png" alt="Vself Ninja"/>
+</p>
 
 ## Documentation
 
