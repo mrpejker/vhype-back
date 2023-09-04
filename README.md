@@ -93,7 +93,7 @@ startEvent(
     );
 ```
 
-checkin(uint56 _eventId, address _recipient) mints SBT reward from giveaway with `_eventId` for `_recipient` wallet.
+`checkin(uint56 _eventId, address _recipient)` mints SBT reward from giveaway with `_eventId` for `_recipient` wallet.
 
 ## Folder structure
 
