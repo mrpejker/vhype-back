@@ -96,6 +96,10 @@ startEvent(
 - `checkin(uint56 _eventId, address _recipient)` mints SBT reward from giveaway with `_eventId` for `_recipient` wallet.
 - `stopEvent(uint256 _eventId)` is available to call for `eventOwner` only, and it stops giveaway with given `_eventId`. 
 
+### External view functions
+- `getOngoingEventDatas(uint256 _fromIndex, uint256 _limit)` returns `EventData` for currently ongoing giveaways.
+- `getOngoingEvents(uint256 _fromIndex, uint256 _limit)` returns all metadata for currently ongoing giveaways.
+
 ## Folder structure
 
 ```
