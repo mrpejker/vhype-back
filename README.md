@@ -47,7 +47,7 @@ struct Quest {
 }
 ```
 
-- `EventData` contains giveaway metadata: unique identifier, name, description, duration, wallets of owner and claimers.
+- `EventData` contains giveaway data: unique identifier, name, description, duration, wallets of owner and claimers.
 ```
 struct EventData {
         uint256 eventId;
@@ -73,7 +73,7 @@ struct EventStats {
     }
 ```
 
-- `Event` consists of all data described above.
+- `Event` consists of all metadata described above.
 ```
 struct Event {
         EventData eventData;
@@ -99,6 +99,9 @@ startEvent(
 ### External view functions
 - `getOngoingEventDatas(uint256 _fromIndex, uint256 _limit)` returns `EventData` for currently ongoing giveaways.
 - `getOngoingEvents(uint256 _fromIndex, uint256 _limit)` returns all metadata for currently ongoing giveaways.
+- `getEventData(uint256 _eventId)` returns `EventData` for the giveaway with `_eventId`.
+- `getEvent(uint256 _eventId)` returns all metadata for the giveaway with `_eventId`.
+- `getEventActions(uint256 _eventId, uint256 _fromIndex, uint256 _limit)` returns claim history for the giveaway with `_eventId`.
 
 ## Folder structure
 
