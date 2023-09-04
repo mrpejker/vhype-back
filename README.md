@@ -35,7 +35,9 @@ Each giveaway is uniquely identified by `<eventId>` and contains the single SBT 
 
 Source code is available [here](https://github.com/vself-project/vself-brands/blob/main/contracts/contracts/Events.sol).
 
+### Data structure
 
+### Functions
 
 
 ## Folder structure
