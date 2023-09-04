@@ -41,13 +41,13 @@ Source code is available [here](https://github.com/vself-project/vself-brands/bl
 
 ```
 struct Quest {
-  string rewardTitle;
-  string rewardDescription;
-  string rewardUri;
+      string rewardTitle;
+      string rewardDescription;
+      string rewardUri;
 }
 ```
 
-`EventData` contains giveaway metadata: unique identifier, name, description, duration, wallets of owner and users.
+`EventData` contains giveaway metadata: unique identifier, name, description, duration, wallets of owner and claimers.
 ```
 struct EventData {
         uint256 eventId;
@@ -61,7 +61,7 @@ struct EventData {
 }
 ```
 
-`EventStats` contains setting up and claiming history and claim analytics.
+`EventStats` contains set up and claim history and claim analytics.
 ```
 struct EventStats {
         uint256 totalActions;
@@ -70,6 +70,15 @@ struct EventStats {
         uint256 createdAt;
         uint256 stoppedAt;
         address[] participants;
+    }
+```
+
+`Event` consists of all data described above.
+```
+struct Event {
+        EventData eventData;
+        EventStats eventStats;
+        Quest quest;
     }
 ```
 ### Functions
