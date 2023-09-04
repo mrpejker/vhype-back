@@ -37,7 +37,7 @@ Source code is available [here](https://github.com/vself-project/vself-brands/bl
 
 ### Data structure
 
-`Quest` contains SBT reward data: name, description and link to source image.
+- `Quest` contains SBT reward data: name, description and link to source image.
 
 ```
 struct Quest {
@@ -47,7 +47,7 @@ struct Quest {
 }
 ```
 
-`EventData` contains giveaway metadata: unique identifier, name, description, duration, wallets of owner and claimers.
+- `EventData` contains giveaway metadata: unique identifier, name, description, duration, wallets of owner and claimers.
 ```
 struct EventData {
         uint256 eventId;
@@ -61,7 +61,7 @@ struct EventData {
 }
 ```
 
-`EventStats` contains set up and claim history and claim analytics.
+- `EventStats` contains set up and claim history and claim analytics.
 ```
 struct EventStats {
         uint256 totalActions;
@@ -73,7 +73,7 @@ struct EventStats {
     }
 ```
 
-`Event` consists of all data described above.
+- `Event` consists of all data described above.
 ```
 struct Event {
         EventData eventData;
@@ -82,7 +82,7 @@ struct Event {
     }
 ```
 ### External functions
-`startEvent()` adds new giveaway given metadata and sets up new `eventId` for it.
+- `startEvent()` adds new giveaway given metadata and sets up new `eventId` for it.
 ```
 startEvent(
         string memory _eventName,
@@ -93,7 +93,7 @@ startEvent(
     );
 ```
 
-`checkin(uint56 _eventId, address _recipient)` mints SBT reward from giveaway with `_eventId` for `_recipient` wallet.
+- `checkin(uint56 _eventId, address _recipient)` mints SBT reward from giveaway with `_eventId` for `_recipient` wallet.
 
 ## Folder structure
 
