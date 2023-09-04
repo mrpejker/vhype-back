@@ -37,6 +37,16 @@ Source code is available [here](https://github.com/vself-project/vself-brands/bl
 
 ### Data structure
 
+SBT reward
+
+```
+struct Quest {
+  string rewardTitle;
+  string rewardDescription;
+  string rewardUri;
+}
+```
+
 ### Functions
 
 
