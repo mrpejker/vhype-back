@@ -82,8 +82,16 @@ struct Event {
     }
 ```
 ### External functions
-
-
+`startEvent()` sets up new `eventId` and adds new giveaway with given data and this id.
+```
+startEvent(
+        string memory _eventName,
+        string memory _eventDescription,
+        uint256 _startTime,
+        uint256 _finishTime,
+        Quest memory _quest
+    )
+```
 
 ## Folder structure
 
