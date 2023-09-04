@@ -81,7 +81,8 @@ struct Event {
         Quest quest;
     }
 ```
-### Functions
+### External functions
+
 
 
 ## Folder structure
