@@ -94,7 +94,7 @@ startEvent(
 ```
 
 - `checkin(uint56 _eventId, address _recipient)` mints SBT reward from giveaway with `_eventId` for `_recipient` wallet.
-- `stopEvent(uint256 _eventId)` stops giveaway with given `_eventId`.
+- `stopEvent(uint256 _eventId)` is available to call for `eventOwner` only, and it stops giveaway with given `_eventId`. 
 
 ## Folder structure
 
