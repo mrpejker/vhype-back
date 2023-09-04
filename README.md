@@ -37,7 +37,7 @@ Source code is available [here](https://github.com/vself-project/vself-brands/bl
 
 ### Data structure
 
-SBT reward
+`<Quest{}>` concains SBT reward data: name, description and link to source image.
 
 ```
 struct Quest {
