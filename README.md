@@ -47,6 +47,19 @@ struct Quest {
 }
 ```
 
+`EventData` contains giveaway metadata: id, name, description, data about giveaway owner and users.
+```
+struct EventData {
+        uint256 eventId;
+        uint256 startTime;
+        uint256 finishTime;
+        uint256 totalUsers;
+        address eventOwner;
+        string eventName;
+        string eventDescription;
+        bool isAvailable;
+}
+```
 ### Functions
 
 
