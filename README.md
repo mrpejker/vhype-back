@@ -82,7 +82,7 @@ struct Event {
     }
 ```
 ### External functions
-`startEvent()` sets up new `eventId` and adds new giveaway with given data and this id.
+`startEvent()` adds new giveaway with new `eventId` and saves retreived metadata.
 ```
 startEvent(
         string memory _eventName,
