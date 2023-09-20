@@ -29,11 +29,9 @@ Here is the description of vSelf [SBT collection toolkit](https://vself-project.
 
 ### Synopsis
 
-This [Solidity](https://soliditylang.org/) smart contract allows to set up giveaway with non-transferable NFT (Soul Boud Token), mints SBT reward to recipient account on successful checkin via claim link, and stores giveaway metadata and mint history. 
+[This smart contract](https://github.com/vself-project/vself-brands/blob/main/contracts/contracts/Events.sol) allows to set up giveaway with non-transferable NFT (Soul Bound Token), mints SBT reward to recipient account on successful checkin via claim link, and stores giveaway metadata and mint history. 
 
 Each giveaway is uniquely identified by `eventId` and contains the single SBT available to claim.
-
-Source code is available [here](https://github.com/vself-project/vself-brands/blob/main/contracts/contracts/Events.sol).
 
 ### Data structure
 
