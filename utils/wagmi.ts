@@ -105,7 +105,7 @@ export const arbitrumSepolia = {
       },
     },
     testnet: true,
-  }
+  } as Chain;
 
 
 export const columbus = {
