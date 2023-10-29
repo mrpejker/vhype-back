@@ -53,3 +53,8 @@ firebase-debug.log
 /radata
 
 .vscode
+
+.env
+
+/contracts/.env
+```

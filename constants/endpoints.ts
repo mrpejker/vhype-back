@@ -38,8 +38,8 @@ export const APIURL = isEnvProd ? APIURL_MAINNET : APIURL_TESTNET;
 export const WEBSITE_URL = isEnvProd ? Endpoints.PROD_URL : Endpoints.TESTNET_URL;
 
 // Events contract address
-export const CAMINO_EVENTS_CONTRACT_ADDRESS = '0x37d0924289a66687D7624963aA4f4bc2Da1Af36e';
-export const CAMINO_CHAIN_ID = 501;
+export const CAMINO_EVENTS_CONTRACT_ADDRESS = '0xbC3d5766B724FD33299c90fAeD05592E50069d21';
+export const CAMINO_CHAIN_ID = 421_613;
 export const REACT_APP_ENABLE_TESTNETS = true;
 
 //Arbutrum 

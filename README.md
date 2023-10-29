@@ -13,13 +13,6 @@ The available fuctionality is to set up custom SBT giveaway, distribute SBT rewa
 
 This application supports [MetaMask](https://metamask.io/) authorization and Arbitrum Sepolia testnet.
 
-## Deployment
-
-- Staging version of [web application](https://brands.vself.app/) is available here. 
-- Smart contract address is [0x37d0924289a66687d7624963aa4f4bc2da1af36e](https://suite.camino.network/explorer/columbus/c-chain/address/0x37d0924289a66687d7624963aa4f4bc2da1af36e).
-
-## User flow 
-![](https://github.com/vself-project/vself-brands/blob/main/309.png)
 
 ## Documentation
 
