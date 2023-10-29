@@ -182,5 +182,5 @@ export const wagmiConfig = createConfig({
     publicClient,
     webSocketPublicClient,
 });
-export const defaultChain = REACT_APP_ENABLE_TESTNETS ? arbitrum : arbitrumGoerli;
+export const defaultChain = REACT_APP_ENABLE_TESTNETS ? arbitrumGoerli : arbitrumGoerli;
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
