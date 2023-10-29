@@ -36,6 +36,8 @@ export const arbitrumSepolia = {
     },
     testnet: true,
   } as Chain; 
+
+  
   export const arbitrum = {
     id: 42_161,
     name: 'Arbitrum One',
@@ -159,7 +161,7 @@ export const camino = {
 } as Chain;
 
 const chains = [
-    ...(REACT_APP_ENABLE_TESTNETS ? [arbitrumGoerli] : [arbitrum]),
+    ...(REACT_APP_ENABLE_TESTNETS ? [arbitrumGoerli] : [arbitrumGoerli]),
 ];
 
 //export const projectId = '1bdb17b0def2da85904fd8e3f27d2ae9';
