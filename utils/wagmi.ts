@@ -162,7 +162,8 @@ const chains = [
     ...(REACT_APP_ENABLE_TESTNETS ? [arbitrumGoerli] : [arbitrum]),
 ];
 
-export const projectId = '1bdb17b0def2da85904fd8e3f27d2ae9';
+//export const projectId = '1bdb17b0def2da85904fd8e3f27d2ae9';
+export const projectId = '664df1515d4bd775b7d5705b8277ff35';
 
 const { publicClient, webSocketPublicClient } = configureChains(
     chains,

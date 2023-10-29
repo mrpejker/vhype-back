@@ -46,10 +46,7 @@ const EventConfirm: React.FC<EventConfirmProps> = ({ buttonCallback, eventData }
                 width: '100%',
                 height: 300,
                 maxHeight: 300,
-                backgroundImage:
-                  file !== undefined
-                    ? `url(${URL.createObjectURL(file)})`
-                    : 'none',
+                backgroundImage: file !== undefined ? `url(${URL.createObjectURL(file)})` : 'none',
                 backgroundSize: 'contain',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
@@ -61,9 +58,7 @@ const EventConfirm: React.FC<EventConfirmProps> = ({ buttonCallback, eventData }
             <span className="mb-2">
               <b>Description:</b> {quest.reward_description}
             </span>
-            <span className="mb-2">
-              {/* <b>QRLink:</b> {quest.qr_prefix} */}
-            </span>
+            <span className="mb-2">{/* <b>QRLink:</b> {quest.qr_prefix} */}</span>
           </div>
         </div>
       </div>
