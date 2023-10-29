@@ -7,11 +7,11 @@
 
 ## Overview 
 
-Current repository contains source code of vSelf web application compatible with [Camino Blockchain](https://camino.network/). 
+Current repository contains source code of vSelf web application compatible with Arbitru.
 
 The available fuctionality is to set up custom SBT giveaway, distribute SBT reward using claim link or QR code, check claim analytics.   
 
-This application supports [MetaMask](https://metamask.io/) authorization and [Columbus](https://docs.camino.network/about/columbus-testnet) testnet.
+This application supports [MetaMask](https://metamask.io/) authorization and Arbitrum Sepolia testnet.
 
 ## Deployment
 

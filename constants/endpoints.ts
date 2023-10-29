@@ -41,3 +41,6 @@ export const WEBSITE_URL = isEnvProd ? Endpoints.PROD_URL : Endpoints.TESTNET_UR
 export const CAMINO_EVENTS_CONTRACT_ADDRESS = '0x37d0924289a66687D7624963aA4f4bc2Da1Af36e';
 export const CAMINO_CHAIN_ID = 501;
 export const REACT_APP_ENABLE_TESTNETS = true;
+
+//Arbutrum 
+export const SEPOLIA_CHAIN_ID = 421_614;
